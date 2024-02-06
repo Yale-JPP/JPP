@@ -1,5 +1,5 @@
 # JPP
-## Japanese Pronunciation Program
+## Japanese Pronunciation Pro
 
 JPP is a website host to a set of tools intended to help Japanese learners of all levels develop their Japanese pronunciation skills. The systems will include:
 
