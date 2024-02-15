@@ -59,9 +59,9 @@ pip install -r requirements.txt
 ```
 
 ### React/npm Setup
-From the home directory, navigate to the react-flask-app folder.
+From the home directory, navigate to the jpp folder.
 ```
-cd react-flask-app
+cd jpp
 ```
 
 From there, install the dependencies specified in package-lock.json.
