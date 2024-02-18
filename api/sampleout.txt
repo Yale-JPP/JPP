@@ -1,0 +1,24 @@
+Currently reading: samples/ga.wav
+Pitch values:  [148.76556, 53.338646, 79.44527]
+Mora length (seconds):  0.15079365079365079
+Average pitch value:  93.84982554117839
+
+Currently reading: samples/ku.wav
+Pitch values:  [0.0, 0.0, 0.0, 0.0, 50.90512]
+Mora length (seconds):  0.23959183673469386
+Average pitch value:  10.181024169921875
+
+Currently reading: samples/sei.wav
+Pitch values:  [0.0, 118.49316, 118.68254, 58.890778, 75.37257, 75.87441, 75.97699, 56.789886]
+Mora length (seconds):  0.3856689342403628
+Average pitch value:  72.51004123687744
+
+Currently reading: samples/de.wav
+Pitch values:  [148.76556, 74.19253]
+Mora length (seconds):  0.13723356009070295
+Average pitch value:  111.47904586791992
+
+Currently reading: samples/su.wav
+Pitch values:  [148.76556, 118.460014, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+Mora length (seconds):  0.42099773242630384
+Average pitch value:  29.69173092312283
