@@ -10,7 +10,7 @@ import whisper
 # currently intended to be used in the command line while in development.
 
 # model type used for whisper. one of "tiny", "base", "small", "medium", and "large".
-SELECTED_MODEL = "tiny"
+SELECTED_MODEL = "base"
 
 def init_parser():
     parser = argparse.ArgumentParser(allow_abbrev=False,
@@ -79,6 +79,7 @@ def preliminary_pronunciation_check(filename, input_text):
     """Uses whisper to check to see if the base level of pronunciation is good enough to be understood by Speech-to-Text AI.
     Will go through a series of checks to see if some standard expectations are met."""
 
+    # grade assigned by whisper. starts at 0.
     grade = 0
 
     model = whisper.load_model(SELECTED_MODEL)
@@ -92,7 +93,8 @@ def preliminary_pronunciation_check(filename, input_text):
 
     # detect the spoken language
     _, probs = model.detect_language(mel)
-    print(f"Detected language: {max(probs, key=probs.get)}")
+    detected_language = max(probs, key=probs.get)
+    print(f"Detected language: {detected_language}")
 
     # decode the audio
     options = whisper.DecodingOptions()
@@ -102,7 +104,7 @@ def preliminary_pronunciation_check(filename, input_text):
     print(result.text)
 
     # start grading
-    if max(probs, key=probs.get) == "Japanese":
+    if detected_language == "ja":
         grade += 1
 
     if result.text == input_text:
