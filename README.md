@@ -58,6 +58,24 @@ To install the dependencies into your virtual environment, run:
 pip install -r requirements.txt
 ```
 
+You may need to also install ffmpeg if you don't already have it on your system:
+```
+# on Ubuntu or Debian
+sudo apt update && sudo apt install ffmpeg
+
+# on Arch Linux
+sudo pacman -S ffmpeg
+
+# on MacOS using Homebrew (https://brew.sh/)
+brew install ffmpeg
+
+# on Windows using Chocolatey (https://chocolatey.org/)
+choco install ffmpeg
+
+# on Windows using Scoop (https://scoop.sh/)
+scoop install ffmpeg
+```
+
 ### React/npm Setup
 From the home directory, navigate to the jpp folder.
 ```
@@ -70,7 +88,7 @@ npm install
 ```
 
 ### Installing yarn/npm
-If your operating system doesn't come with yarn or npm supported, you may need to install it. 
+If your operating system doesn't come with yarn or npm supported, you may need to install it.
 Yarn and npm will install to your local device.
 ```
 sudo npm install -g npm
