@@ -5,12 +5,17 @@ import librosa
 import aubio
 import numpy as np
 import matplotlib.pyplot as plt
-import whisper
+import whisper # consider local import to cut down on import time.
 
 # currently intended to be used in the command line while in development.
 
-# model type used for whisper. one of "tiny", "base", "small", "medium", and "large".
-SELECTED_MODEL = "base"
+# ~~~~~~~~~~~ PARAMETERS THAT AFFECT GRADING ~~~~~~~~~~~
+SELECTED_MODEL = "base" # model type used for whisper. one of "tiny", "base", "small", "medium", and "large".
+CORRECT_LANGUAGE_WEIGHT = 0.6 # weight given to an answer that gets the correct language detected.
+CORRECT_TEXT_WEIGHT = 0.4 # weight given to an answer that gets the correct input text detected.
+BUF_SIZE = 1024 # higher value means more frequency resolution
+HOP_SIZE = 128 # lower value means larger rate of sampling
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def init_parser():
     parser = argparse.ArgumentParser(allow_abbrev=False,
@@ -30,12 +35,9 @@ def get_sound_info(filename):
     # mora length calculation
     mora_length = librosa.get_duration(y=y, sr=sr)
 
-    buf_size = 1024 # higher value means more frequency resolution
-    hop_size = 128 # lower value means larger rate of sampling
-
     # using yin algorithm for faster runtime, since input soundfile should be a mostly monophonic audio signal
     # note that yin uses FFTs internally.
-    pitch_o = aubio.pitch("yin", buf_size, hop_size, sr)
+    pitch_o = aubio.pitch("yin", BUF_SIZE, HOP_SIZE, sr)
     pitch_o.set_unit("midi") # midi will give us easier comparison for relative pitch, although Hz should also work. to test later.
     pitch_o.set_tolerance(0.8)
 
@@ -43,10 +45,10 @@ def get_sound_info(filename):
     pitches = []
     # confidence = []
 
-    total_frames = len(y) // hop_size
+    total_frames = len(y) // HOP_SIZE
     for frame_index in range(total_frames):
-        start = frame_index * hop_size
-        end = min((frame_index + 1) * hop_size, len(y)) # make sure not to go out of bounds
+        start = frame_index * HOP_SIZE
+        end = min((frame_index + 1) * HOP_SIZE, len(y)) # make sure not to go out of bounds
         samples = y[start:end]
         pitch_val = pitch_o(samples)[0]
         # print(pitch_o(samples))
@@ -103,12 +105,15 @@ def preliminary_pronunciation_check(filename, input_text):
     # print the recognized text
     print(result.text)
 
-    # start grading
+    # start grading.
     if detected_language == "ja":
-        grade += 1
-
-    if result.text == input_text:
-        grade += 1
+        grade += 0.6
+        # result text will only ever be correct if in correct language, so nest.
+        if result.text == input_text:
+            grade += 0.4
+        else:
+            # partial credit here perhaps?
+            pass
 
 def main():
     # current CLI interface lets us test individual sound files as well as the hard-coded example
@@ -117,26 +122,42 @@ def main():
     filename = args.filename
     input_text = args.input_text
 
-    # test gakusei-desu
-    if filename is None:
-        filename = ["samples/ga.wav",
-                     "samples/ku.wav",
-                     "samples/sei.wav",
-                     "samples/de.wav",
-                     "samples/su.wav"]
-        for sf in filename:
-            print("Currently reading: " + sf)
-            res = get_sound_info(sf)
-            print(res)
-            print("")
-    # else do whatever file was requested
+    if filename is None or input_text is None:
+        print("Incorrect parameters")
+        return
+
+    print("Currently reading: " + filename)
+    if not os.path.isfile(filename):
+        print("File not found")
+        return
     else:
-        print("Currently reading: " + filename)
-        if not os.path.isfile(filename):
-            return "File not found"
-        else:
-            preliminary_pronunciation_check(filename, input_text)
-            # get_sound_info(filename)
+        grade = 0
+        coefficient = preliminary_pronunciation_check(filename, input_text)
+        if coefficient != 0: # if it is worth it to grade the sound file
+            # start with a base value of 50. correct language bonus will scale this down to 50 * CORRECT_LANGUAGE_WEIGHT.
+            grade += 50
+            get_sound_info(filename)
+
+    # # test gakusei-desu. used temporarily while in dev.
+    # if filename is None:
+    #     filename = ["samples/ga.wav",
+    #                  "samples/ku.wav",
+    #                  "samples/sei.wav",
+    #                  "samples/de.wav",
+    #                  "samples/su.wav"]
+    #     for sf in filename:
+    #         print("Currently reading: " + sf)
+    #         res = get_sound_info(sf)
+    #         print(res)
+    #         print("")
+    # # else do whatever file was requested
+    # else:
+    #     print("Currently reading: " + filename)
+    #     if not os.path.isfile(filename):
+    #         return "File not found"
+    #     else:
+    #         preliminary_pronunciation_check(filename, input_text)
+    #         # get_sound_info(filename)
 
 if __name__ == "__main__":
     main()
