@@ -6,16 +6,12 @@ import aubio
 import numpy as np
 import matplotlib.pyplot as plt
 import whisper # consider local import to cut down on import time.
+from difflib import SequenceMatcher
+
+import utilities
+from settings import *
 
 # currently intended to be used in the command line while in development.
-
-# ~~~~~~~~~~~ PARAMETERS THAT AFFECT GRADING ~~~~~~~~~~~
-SELECTED_MODEL = "base" # model type used for whisper. one of "tiny", "base", "small", "medium", and "large".
-CORRECT_LANGUAGE_WEIGHT = 0.6 # weight given to an answer that gets the correct language detected.
-CORRECT_TEXT_WEIGHT = 0.4 # weight given to an answer that gets the correct input text detected.
-BUF_SIZE = 1024 # higher value means more frequency resolution
-HOP_SIZE = 128 # lower value means larger rate of sampling
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def init_parser():
     parser = argparse.ArgumentParser(allow_abbrev=False,
@@ -24,7 +20,7 @@ def init_parser():
     parser.add_argument('input_text', nargs='?', help='the word being said in the soundfile', type=str)
     return parser
 
-def get_sound_info(filename):
+def get_sound_info(filename, input_text):
     """Given an audio file to load, returns a tuple with (pitches, mora_length) where
     pitches is an array of pitch values, and mora_length is a length in seconds of the soundfile."""
 
@@ -39,7 +35,7 @@ def get_sound_info(filename):
     # note that yin uses FFTs internally.
     pitch_o = aubio.pitch("yin", BUF_SIZE, HOP_SIZE, sr)
     pitch_o.set_unit("midi") # midi will give us easier comparison for relative pitch, although Hz should also work. to test later.
-    pitch_o.set_tolerance(0.8)
+    pitch_o.set_tolerance(PITCH_TOLERANCE)
 
     # iterate through input audio file
     pitches = []
@@ -63,23 +59,33 @@ def get_sound_info(filename):
     print("Average pitch value: ", sum(pitches) / len(pitches))
 
     print("# of samples: ", len(pitches))
-    plot(pitches)
     return (pitches, mora_length)
 
+def compare_hiragana_strings(input, expected):
+    """Given two hiragana strings, compare how close the input text is to the expected test.
+    Returns a value between 0 and 1."""
+    grade = 1
 
-def plot(pitches):
-    """Given a set of pitches, plot them equally spaced in time to see a visualization of the pitch over time."""
-    time_axis = np.arange(len(pitches))
-    plt.scatter(time_axis, pitches)
+    # how close is the length of the strings?
+    length_difference = len(expected) - len(input)
+    grade -= length_difference / len(expected)
 
-    plt.ylabel("Pitch")
-    plt.title("Pitch vs. Time")
+    for moji in input:
+        if moji not in expected:
+            grade *= HIRAGANA_NOT_FOUND_PENALTY
 
-    plt.show()
+    return grade
 
-def preliminary_pronunciation_check(filename, input_text):
+def compare_romaji_strings(input, expected):
+    """Given two hiragana strings, compare how close the input text is to the expected test.
+    Returns a value between 0 and 1."""
+    return SequenceMatcher(None, input, expected).ratio()
+
+def preliminary_pronunciation_check(filename, expected_text):
     """Uses whisper to check to see if the base level of pronunciation is good enough to be understood by Speech-to-Text AI.
-    Will go through a series of checks to see if some standard expectations are met."""
+    Will go through a series of checks to see if some standard expectations are met.
+    Currently, those checks are making sure the model detects the spoken language as Japanese, and that the words are transcribed correctly.
+    Note that filename and expected_text should be the full phrase, not the individual segmented phrases!"""
 
     # grade assigned by whisper. starts at 0.
     grade = 0
@@ -107,13 +113,22 @@ def preliminary_pronunciation_check(filename, input_text):
 
     # start grading.
     if detected_language == "ja":
-        grade += 0.6
+        grade += CORRECT_LANGUAGE_WEIGHT
         # result text will only ever be correct if in correct language, so nest.
-        if result.text == input_text:
-            grade += 0.4
+        if result.text == expected_text:
+            grade += CORRECT_TEXT_WEIGHT
         else:
-            # partial credit here perhaps?
-            pass
+            # japanese detected, incorrect word detected.
+            result_hiragana = utilities.text_to_hiragana(result.text)
+            expected_hiragana = utilities.text_to_hiragana(expected_text)
+
+            grade += CORRECT_TEXT_WEIGHT * compare_hiragana_strings(result_hiragana, expected_hiragana)
+    else:
+        result_romaji = utilities.text_to_romaji(result.text)
+        expected_romaji = utilities.text_to_romaji(expected_text)
+        grade += CORRECT_LANGUAGE_WEIGHT * compare_romaji_strings(result_hiragana, expected_hiragana)
+
+
 
 def main():
     # current CLI interface lets us test individual sound files as well as the hard-coded example
@@ -135,7 +150,7 @@ def main():
         coefficient = preliminary_pronunciation_check(filename, input_text)
         if coefficient != 0: # if it is worth it to grade the sound file
             # start with a base value of 50. correct language bonus will scale this down to 50 * CORRECT_LANGUAGE_WEIGHT.
-            grade += 50
+            grade += BASE_GRADE
             get_sound_info(filename)
 
     # # test gakusei-desu. used temporarily while in dev.
