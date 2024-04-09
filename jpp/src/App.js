@@ -2,6 +2,9 @@ import './App.css';
 import { Button } from '@mui/material';
 import { useState, useRef } from 'react';
 
+// Used https://developer.mozilla.org/en-US/docs/Web/API/MediaStream_Recording_API/Using_the_MediaStream_Recording_API
+// Assisted by previous code from Murtaza
+
 function App() {
 
   const [stream, setStream] = useState();
