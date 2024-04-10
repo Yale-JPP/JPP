@@ -79,7 +79,7 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
     if accent_type == 0: # heiban
         low_pitch = pitches[0]
         # check if 2nd mora is devoiced or not.
-        if devoiced_check(word[1]):
+        if devoiced_check(word[1]) and len(word) > 2:
             high_pitch = pitches[2]
         else:
             high_pitch = pitches[1]
@@ -107,10 +107,10 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
         print(jump_accuracy, pattern_accuracy)
         grade = jump_accuracy * pattern_accuracy
 
-    elif accent_type == 1: # high, drops till end.
+    elif accent_type == 1: # high, drops gradually till end.
         high_pitch = pitches[0]
         # check if 2nd mora is devoiced or not.
-        if devoiced_check(word[1]):
+        if devoiced_check(word[1]) and len(word) > 2:
             low_pitch = pitches[2]
         else:
             low_pitch = pitches[1]
@@ -124,23 +124,23 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
         pattern_accuracy = 0
         for i in range(len(pitches[1:])):
             lower_bound, upper_bound = get_bounds(high_pitch, PITCH_TOLERANCE)
-            if pitches[i] <= upper_bound * high_pitch:
+            if pitches[i] <= lower_bound * high_pitch:
                 pattern_accuracy += 1
                 high_pitch = pitches[i]
             elif devoiced_check(word[i]):
                 pattern_accuracy += 1
             else:
-                pattern_accuracy += error_calculation(upper_bound * high_pitch, pitches[i])
+                pattern_accuracy += error_calculation(lower_bound * high_pitch, pitches[i])
                 high_pitch = pitches[i] # to be kinder with grading, in case they accidentally went up.
 
         pattern_accuracy = pattern_accuracy / len(pitches[1:])
         print(pattern_accuracy)
         grade = jump_accuracy * pattern_accuracy
 
-    elif accent_type == 2: # low, high then drops till end
+    elif accent_type == 2: # low, high then gradually drops till end
         low_pitch = pitches[0]
         # check if 2nd mora is devoiced or not.
-        if devoiced_check(word[1]):
+        if devoiced_check(word[1]) and len(word) > 2:
             high_pitch = pitches[2]
         else:
             high_pitch = pitches[1]
@@ -154,18 +154,20 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
         pattern_accuracy = 0
         for i in range(len(pitches[2:])):
             lower_bound, upper_bound = get_bounds(high_pitch, PITCH_TOLERANCE)
-            if pitches[i] <= upper_bound * high_pitch:
+            if pitches[i] <= lower_bound * high_pitch:
                 pattern_accuracy += 1
                 high_pitch = pitches[i]
             elif devoiced_check(word[i]):
                 pattern_accuracy += 1
             else:
-                pattern_accuracy += error_calculation(upper_bound * high_pitch, pitches[i])
+                pattern_accuracy += error_calculation(lower_bound * high_pitch, pitches[i])
                 high_pitch = pitches[i] # to be kinder with grading, in case they accidentally went up.
 
         grade = jump_accuracy * pattern_accuracy
 
     elif accent_type == 3:
+        pass
+    elif accent_type == 4:
         pass
     else:
         print("Invalid accent type.")
