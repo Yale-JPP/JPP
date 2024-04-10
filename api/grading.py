@@ -2,7 +2,7 @@ from sys import exit, stderr
 import os.path
 import argparse
 from settings import BASE_GRADE
-from preprocessing import preliminary_pronunciation_check
+# from preprocessing import preliminary_pronunciation_check
 from analysis import get_sound_info
 
 # currently intended to be used in the command line while in development.
@@ -30,7 +30,8 @@ def main():
         return
     else:
         grade = 0
-        coefficient = preliminary_pronunciation_check(filename, expected_text)
+        # coefficient = preliminary_pronunciation_check(filename, expected_text)
+        coefficient = 1
         print(f"Coefficient = {coefficient}")
         if coefficient != 0: # if it is worth it to grade the sound file
             # start with a base value that will be weighted according to the coefficient found.
