@@ -1,3 +1,4 @@
+from ast import pattern
 import librosa
 import numpy as np
 from settings import PITCH_TOLERANCE, HOP_LENGTH, FMIN, FMAX
@@ -51,7 +52,7 @@ def within_bounds(target, tolerance, value):
 
 def error_calculation(expected, actual, tolerance=None):
     """Helper function that given an expected and actual value, calculates between (0, 1] how close
-    the actual value was to the expected.
+    the actual value was to the expected, with 1 being the most accurate and 0 being the least.
     If tolerance is passed in, instead handles a range of expected values."""
     if tolerance is None:
         return abs(expected - actual) / expected
@@ -91,7 +92,6 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
         else:
             jump_accuracy = 1
 
-
         pattern_accuracy = 0
         for pitch in pitches[2:]:
             if within_bounds(high_pitch, PITCH_TOLERANCE, pitch):
@@ -108,13 +108,30 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
         grade = jump_accuracy * pattern_accuracy
 
     elif accent_type == 1: # high, drops till end.
-        pass
+        high_pitch = pitches[0]
+        pattern_accuracy = 0
+
+        for i in range(len(pitches[1:])):
+            lower_bound, upper_bound = get_bounds(high_pitch, PITCH_TOLERANCE)
+            if pitches[i] <= upper_bound * high_pitch:
+                pattern_accuracy += 1
+                high_pitch = pitches[i]
+            elif devoiced_check(word[i]):
+                pattern_accuracy += 1
+            else:
+                pattern_accuracy += error_calculation(upper_bound * high_pitch, pitches[i])
+                high_pitch = pitches[i] # to be kinder with grading, in case they accidentally went up.
+
+        pattern_accuracy = pattern_accuracy / len(pitches[1:])
+        print(pattern_accuracy)
+        grade = pattern_accuracy
+
     elif accent_type == 2:
         pass
     elif accent_type == 3:
         pass
     else:
-        print("error")
+        print("Invalid accent type.")
 
     return grade
 

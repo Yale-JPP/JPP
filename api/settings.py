@@ -16,4 +16,4 @@ HIRAGANA_NOT_FOUND_PENALTY = 0.9 # penalty coefficient to which a grade should b
 HOP_LENGTH = 512 # values indicate spacing between consecutive analysis windows
 FMIN = 40 # lower bound for frequency sampling
 FMAX = 1000 # upper bound for frequency sampling
-PITCH_TOLERANCE = 0.05 # indicates how close a pitch must be to its expected value. ie. 0.1 means it must be +/- 10% of the expected value.
+PITCH_TOLERANCE = 0.1 # indicates how close a pitch must be to its expected value. ie. 0.1 means it must be +/- 10% of the expected value.
