@@ -1,6 +1,6 @@
 import librosa
 import numpy as np
-from settings import PITCH_TOLERANCE, HOP_LENGTH, FMIN, FMAX, TYPE_0_EXPECTED_CHANGE
+from settings import PITCH_TOLERANCE, HOP_LENGTH, FMIN, FMAX
 from utilities import plot
 
 COMMONLY_DEVOICED_MORA = ["く", "す"]
@@ -34,12 +34,42 @@ def devoiced_check(word):
     else:
         return False
 
+def get_bounds(target, tolerance):
+    """Helper function that given a tolerance value and a target value, returns a tuple with
+    the (lower_bound, upper_bound)."""
+    upper_bound = target + target * tolerance
+    lower_bound = target - target * tolerance
+    return (lower_bound, upper_bound)
+
+def within_bounds(target, tolerance, value):
+    """Helper function that returns if the input value is within specifications."""
+    lower, upper = get_bounds(target, tolerance)
+    if value >= lower and value <= upper:
+        return True
+    else:
+        return False
+
+def error_calculation(expected, actual, tolerance=None):
+    """Helper function that given an expected and actual value, calculates between (0, 1] how close
+    the actual value was to the expected.
+    If tolerance is passed in, instead handles a range of expected values."""
+    if tolerance is None:
+        return abs(expected - actual) / expected
+
+    lower_bound, upper_bound = get_bounds(target=expected, tolerance=tolerance)
+
+    if actual < lower_bound:
+        # lower than expected
+        return error_calculation(lower_bound, actual)
+    else:
+        # higher than expected
+        return error_calculation(upper_bound, actual)
+
 def grade_pitch_pattern(soundfiles, accent_type, word):
     """Expects an input of spliced soundfiles that refer to the word.
     For instance, gakusei-desu should be spliced ga-ku-se-i-de-su and passed in an array accordingly.
     accent_type refers to one of the four accent pattern types passed as an integer.
     word should be an array parallel with soundfiles that gives the spliced hiragana string."""
-    mora_length = len(soundfiles)
     grade = 0
     pitches = []
     for mora in soundfiles:
@@ -47,32 +77,35 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
 
     if accent_type == 0: # heiban
         low_pitch = pitches[0]
-        high_pitch = pitches[1]
+        # check if 2nd mora is devoiced or not.
+        if devoiced_check(word[1]):
+            high_pitch = pitches[2]
+        else:
+            high_pitch = pitches[1]
         delta = high_pitch - low_pitch
-        # 1 for perfect inputs, < 1 for smaller pitch changes than expected, < 1 for larger pitch changes than expected.
-        lo_hi_jump_accuracy = min(TYPE_0_EXPECTED_CHANGE, delta) / max(delta, TYPE_0_EXPECTED_CHANGE)
 
-        high_pitch_upper_bound = high_pitch + high_pitch * PITCH_TOLERANCE
-        high_pitch_lower_bound = high_pitch - high_pitch * PITCH_TOLERANCE
+        if delta <= 0:
+            jump_accuracy = 0
+        # elif within_bounds(low_pitch, JUMP_TOLERANCE, high_pitch):
+        #    pass
+        else:
+            jump_accuracy = 1
+
 
         pattern_accuracy = 0
         for pitch in pitches[2:]:
-            if pitch >= high_pitch_lower_bound and pitch <= high_pitch_upper_bound:
+            if within_bounds(high_pitch, PITCH_TOLERANCE, pitch):
                 # within the bounds. give perfect grade.
                 pattern_accuracy += 1
             elif devoiced_check(word[pitches.index(pitch)]):
                 # devoiced check comes before lower/upper bound comparisons
                 pattern_accuracy += 1
-            elif pitch < high_pitch_lower_bound:
-                # lower than expected
-                pattern_accuracy += pitch / high_pitch_lower_bound
-
-            elif pitch > high_pitch_upper_bound:
-                # higher than expected
-                pattern_accuracy += high_pitch_upper_bound / pitch
+            else:
+                pattern_accuracy += error_calculation(high_pitch, pitch, PITCH_TOLERANCE)
 
         pattern_accuracy = pattern_accuracy / len(pitches[2:])
-        grade += lo_hi_jump_accuracy * pattern_accuracy
+        print(jump_accuracy, pattern_accuracy)
+        grade = jump_accuracy * pattern_accuracy
 
     elif accent_type == 1: # high, drops till end.
         pass
@@ -83,69 +116,10 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
     else:
         print("error")
 
-
-    # def detect_pitch(y, sr, t):
-    #     """Get pitch at time t."""
-    #     index = magnitudes[:, t].argmax()
-    #     pitch = pitches[index, t]
-
-    #     return pitch
-
-    # pitch = detect_pitch(y, sr, t=length/2)
-
-    # print(pitch)
-
-    # import matplotlib.pyplot as plt # remove later
-    # # plt.scatter(pitches, magnitudes)
-
-    # # for i in range(pitches.shape[1]): # for each column in pitches 2D array
-    # #     pitch_column = pitches[:, i] # grab all the pitches at time frame 'i'
-    # #     pitch_value = max(pitch_column) # grab max "dominant" pitch at 'i'
-    # #     pitch_values.append(pitch_value)
-
-
-    # # # Convert frame index to time
-    # # times = librosa.times_like(pitches)
-
-    # plt.figure(figsize=(10, 4))
-    # plt.plot(times, pitch_values, label='Pitch (Hz)')
-    # plt.xlabel('Time (s)')
-    # plt.ylabel('Pitch (Hz)')
-    # plt.title('Pitch of Human Voice')
-    # plt.legend()
-    # plt.show()
-    # plot(pitch_values)
-
-    # # using yin algorithm for faster runtime, since input soundfile should be a mostly monophonic audio signal
-    # # note that yin uses FFTs internally.
-    # pitch_o = aubio.pitch("yin", BUF_SIZE, HOP_SIZE, sr)
-    # pitch_o.set_unit("hz") # midi will give us easier comparison for relative pitch, although Hz should also work. to test later.
-    # pitch_o.set_tolerance(PITCH_TOLERANCE)
-
-    # # iterate through input audio file
-    # pitches = []
-    # # confidence = []
-
-    # total_frames = len(y) // HOP_SIZE
-    # for frame_index in range(total_frames):
-    #     start = frame_index * HOP_SIZE
-    #     end = min((frame_index + 1) * HOP_SIZE, len(y)) # make sure not to go out of bounds
-    #     samples = y[start:end]
-    #     pitch_val = pitch_o(samples)[0]
-    #     # print(pitch_o(samples))
-    #     # if pitch_val != 0.0: # remove 0s as those are silent portions
-    #     pitches.append(pitch_val)
-    #     # confidence_val = pitch_o.get_confidence()
-    #     # confidence.append(confidence_val)
-
-    # print("Pitch values: ", pitches)
-    # # # print("Confidence values:", confidence)
-    # # print("Mora length (seconds): ", mora_length)
-    # print(f"Average pitch value: {sum(pitches) / len(pitches)}",)
-
-    # print(f"# of samples: {len(pitches)}")
-
-    # plot(pitches)
-    # return (pitches, mora_length)
+    return grade
 
 # for testing.
+soundfiles = ["samples/ga.wav", "samples/ku.wav", "samples/sei.wav", "samples/de.wav", "samples/su.wav"]
+accent_type = 0
+word = ["が", "く", "せい", "で", "す"]
+result = grade_pitch_pattern(soundfiles, accent_type, word)
