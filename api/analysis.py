@@ -1,7 +1,7 @@
 from ast import pattern
 import librosa
 import numpy as np
-from settings import PITCH_TOLERANCE, HOP_LENGTH, FMIN, FMAX
+from settings import PITCH_TOLERANCE, HOP_LENGTH, FMIN, FMAX, MINIMUM_DELTA
 from utilities import plot
 
 COMMONLY_DEVOICED_MORA = ["く", "す"]
@@ -85,12 +85,12 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
             high_pitch = pitches[1]
         delta = high_pitch - low_pitch
 
-        if delta <= 0:
+        if delta <= MINIMUM_DELTA:
             jump_accuracy = 0
         # elif within_bounds(low_pitch, JUMP_TOLERANCE, high_pitch):
         #    pass
-        else:
-            jump_accuracy = 1
+        # else:
+        #     jump_accuracy = 1
 
         pattern_accuracy = 0
         for pitch in pitches[2:]:
@@ -109,8 +109,19 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
 
     elif accent_type == 1: # high, drops till end.
         high_pitch = pitches[0]
-        pattern_accuracy = 0
+        # check if 2nd mora is devoiced or not.
+        if devoiced_check(word[1]):
+            low_pitch = pitches[2]
+        else:
+            low_pitch = pitches[1]
+        delta = high_pitch - low_pitch
 
+        if delta <= MINIMUM_DELTA:
+            jump_accuracy = 0
+        else:
+            jump_accuracy = 1
+
+        pattern_accuracy = 0
         for i in range(len(pitches[1:])):
             lower_bound, upper_bound = get_bounds(high_pitch, PITCH_TOLERANCE)
             if pitches[i] <= upper_bound * high_pitch:
@@ -124,10 +135,36 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
 
         pattern_accuracy = pattern_accuracy / len(pitches[1:])
         print(pattern_accuracy)
-        grade = pattern_accuracy
+        grade = jump_accuracy * pattern_accuracy
 
-    elif accent_type == 2:
-        pass
+    elif accent_type == 2: # low, high then drops till end
+        low_pitch = pitches[0]
+        # check if 2nd mora is devoiced or not.
+        if devoiced_check(word[1]):
+            high_pitch = pitches[2]
+        else:
+            high_pitch = pitches[1]
+        delta = high_pitch - low_pitch
+
+        if delta <= MINIMUM_DELTA:
+            jump_accuracy = 0
+        else:
+            jump_accuracy = 1
+
+        pattern_accuracy = 0
+        for i in range(len(pitches[2:])):
+            lower_bound, upper_bound = get_bounds(high_pitch, PITCH_TOLERANCE)
+            if pitches[i] <= upper_bound * high_pitch:
+                pattern_accuracy += 1
+                high_pitch = pitches[i]
+            elif devoiced_check(word[i]):
+                pattern_accuracy += 1
+            else:
+                pattern_accuracy += error_calculation(upper_bound * high_pitch, pitches[i])
+                high_pitch = pitches[i] # to be kinder with grading, in case they accidentally went up.
+
+        grade = jump_accuracy * pattern_accuracy
+
     elif accent_type == 3:
         pass
     else:
