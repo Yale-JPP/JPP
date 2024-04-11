@@ -1,17 +1,21 @@
 import './App.css';
 import { Button } from '@mui/material';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 // Used https://developer.mozilla.org/en-US/docs/Web/API/MediaStream_Recording_API/Using_the_MediaStream_Recording_API
 // Assisted by previous code from Murtaza
 
 function App() {
-
+  const mimeType = "audio/webm";
   const [stream, setStream] = useState();
   const mediaRecorder = useRef();
   const [permission, setPermission] = useState(false);
   const [chunks, setChunks] = useState([]);
   // const [audio, setAudio] = useState("");
+
+  useEffect(() => {
+    getUserPermission();
+  }, []);
 
   const getUserPermission = async () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -41,7 +45,7 @@ function App() {
   }
 
   const startRecording = () => {
-    const media = new MediaRecorder(stream);
+    const media = new MediaRecorder(stream, { mimeType: mimeType });
 
     mediaRecorder.current = media;
 
@@ -62,19 +66,29 @@ function App() {
   const stopRecording = () => {
     mediaRecorder.current.stop();
     console.log(mediaRecorder.current.state);
-    // console.log("recorder stopped");
+    console.log("recorder stopped");
 
     mediaRecorder.current.onstop = (e) => {
-      console.log("recorder stopped");
-    
-      const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
-      const audioURL = window.URL.createObjectURL(blob);
-      // setAudio(audioURL);
-      // audio.src = audioURL
+      const audioBlob = new Blob(chunks, { type: mimeType });
 
-      document.getElementById("audio").src=audioURL;
+      const reader = new FileReader();
 
-      console.log(audioURL)
+      reader.addEventListener("loadend", async () => {
+        // reader.result contains the contents of blob as a typed array
+        console.log(reader.result);
+        const response = await fetch('/parse-syllables', {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json" 
+          },
+          body: JSON.stringify({
+            "audio": reader.result
+          })
+        });
+        const result = await response.json();
+        console.log(result);
+      });
+      reader.readAsDataURL(audioBlob);
     };
     
   }
@@ -93,21 +107,6 @@ function App() {
     <div className="App">
       <Button variant="contained" onClick={recordClick}>Record</Button>
       <Button variant="contained" onClick={stopRecording}>Stop</Button>
-      <audio id='audio' controls></audio>
-      {/* <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header> */}
     </div>
   );
 }

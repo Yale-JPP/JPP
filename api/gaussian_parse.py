@@ -77,10 +77,11 @@ class GaussianParse():
     dips of that curve. Can separate the audio file into syllables and 
     plot the graph. 
     """
-    def __init__(self, dir, file, furigana, mora):
+    def __init__(self, file, furigana, mora):
+    # def __init__(self, data, sr, furigana, mora):
         # Create the path and find the word
-        self._path = os.path.join(dir, file)
-        self._kanji = file[:-4]
+        # self._path = os.path.join(dir, file)
+        # self._kanji = file[:-4]
         
         # --------FOR TESTING PURPOSES---------------
         self._furigana = furigana
@@ -88,7 +89,9 @@ class GaussianParse():
         # -------------------------------------------
         
         # Load the waveform
-        self._original, self._sampling_rate = librosa.load(self._path)
+        self._original, self._sampling_rate = librosa.load(file)
+        # self._original = data
+        # self._sampling_rate = sr
         # print(self._original.shape)
         self._original, self._index = librosa.effects.trim(self._original, top_db=40)
         # print(self._original.shape)
@@ -160,15 +163,19 @@ class GaussianParse():
             self._dips = np.append(self._dips, [half_point])
 
         t1 = 0
+        clips = []
         for i, end_timestamp in enumerate(self._dips):
-            export_filename = "output/" + self._kanji + str(i) + ".wav"
+            # export_filename = "output/" + self._kanji + str(i) + ".wav"
             newAudio = self._original[t1:end_timestamp]
-            sf.write(export_filename, newAudio, self._sampling_rate)
+            # sf.write(export_filename, newAudio, self._sampling_rate)
+            clips.append(newAudio)
             t1 = end_timestamp
         
-        export_filename = "output/" + self._kanji + str(self._mora - 1) + ".wav"
+        # export_filename = "output/" + self._kanji + str(self._mora - 1) + ".wav"
         newAudio = self._original[t1:]
-        sf.write(export_filename, newAudio, self._sampling_rate)
+        clips.append(newAudio)
+        return clips
+        # sf.write(export_filename, newAudio, self._sampling_rate)
     
     def plot_waves(self):
         """
@@ -188,17 +195,17 @@ class GaussianParse():
         axes[1].legend()
         plt.show()
             
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    dir_name = '1+2 Noun/'
-    # entries = os.listdir(dir_name)
+#     dir_name = '1+2 Noun/'
+#     # entries = os.listdir(dir_name)
 
-    for entry in data:
-    # for entry in entries:
-        # print(entry[:-4], end=" ")
-        gp = GaussianParse(dir_name, entry[0] + ".wav", entry[1], entry[2])
-        gp.splice_audio()
-        # gp.plot_waves()
-    # gp = GaussianParse('1+2 Noun/', '世界.wav', "せかいです", 5)
-    # gp.splice_audio()
-    # gp.plot_waves()
+#     for entry in data:
+#     # for entry in entries:
+#         # print(entry[:-4], end=" ")
+#         gp = GaussianParse(dir_name, entry[0] + ".wav", entry[1], entry[2])
+#         gp.splice_audio()
+#         gp.plot_waves()
+#     # gp = GaussianParse('1+2 Noun/', '世界.wav', "せかいです", 5)
+#     # gp.splice_audio()
+#     # gp.plot_waves()
