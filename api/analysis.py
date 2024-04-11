@@ -211,8 +211,66 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
         print(jump_accuracy, coefficient, pattern_accuracy)
         grade = jump_accuracy * coefficient * pattern_accuracy
 
-    elif accent_type == 4:
-        pass
+    elif accent_type == 4: # low, hi, then drop on end of word (ie. on "de" of "desu")
+        # assumes at least 2-mora word + de-su for 4 minimum mora.
+        low_pitch = pitches[0]
+        # check if 2nd mora is devoiced or not.
+        if devoiced_check(word[1]) and len(word) > 2:
+            high_pitch = pitches[2]
+        else:
+            high_pitch = pitches[1]
+        delta = high_pitch - low_pitch
+
+        if delta <= 0:
+            jump_accuracy = 0
+        elif delta <= MINIMUM_DELTA:
+            jump_accuracy = error_calculation(expected=MINIMUM_DELTA, actual=delta)
+        else:
+            jump_accuracy = 1
+
+        pattern_accuracy = 0
+        for pitch in pitches[2:-2]: # cut at "desu." hard coded for 2-mora suffix, might need a dynamic approach later.
+            if within_bounds(high_pitch, PITCH_TOLERANCE, pitch):
+                # within the bounds. give perfect grade.
+                pattern_accuracy += 1
+            elif devoiced_check(word[pitches.index(pitch)]):
+                # devoiced check comes before lower/upper bound comparisons
+                pattern_accuracy += 1
+            else:
+                pattern_accuracy += error_calculation(high_pitch, pitch, PITCH_TOLERANCE)
+
+        # reuse delta to calculate jump down from word to suffix.
+
+        low_pitch = pitches[-2]
+        # check if 2nd mora is devoiced or not.
+        if devoiced_check(word[-3]):
+            high_pitch = pitches[-3]
+        else:
+            high_pitch = pitches[-3]
+        delta = high_pitch - low_pitch
+
+        if delta <= 0:
+            jump_accuracy = 0
+        elif delta <= MINIMUM_DELTA:
+            jump_accuracy += error_calculation(expected=MINIMUM_DELTA, actual=delta)
+        else:
+            jump_accuracy += 1
+
+        jump_accuracy = jump_accuracy / 2 # average out over two expected jumps.
+
+        # ensure last mora is in expected value compared to 2nd to last mora.
+        lower_bound, upper_bound = get_bounds(low_pitch, PITCH_TOLERANCE)
+        if pitches[-1] <= lower_bound:
+            pattern_accuracy += 1
+        elif devoiced_check(word[-1]):
+            pattern_accuracy += 1
+        else:
+            pattern_accuracy += error_calculation(lower_bound, pitches[-1])
+
+        pattern_accuracy = pattern_accuracy / (len(pitches[2:-2]) + 1) # add one for last drop pattern.
+        print(jump_accuracy, pattern_accuracy)
+        grade = jump_accuracy * pattern_accuracy
+
     else:
         print("Invalid accent type.")
 
