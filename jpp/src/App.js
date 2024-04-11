@@ -1,25 +1,20 @@
-import logo from './logo.svg';
+import { BrowserRouter, Routes, Route} from 'react-router-dom';
 import './App.css';
+import HomePage from './pages/homepage';
+import OneTwoNoun from './pages/1+2_noun';
 
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage/>}/>
+        <Route path="/1+2_noun" element={<OneTwoNoun/>}/>
+      </Routes>
+    </BrowserRouter>
+
+  )
 }
 
 export default App;
