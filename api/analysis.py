@@ -1,8 +1,6 @@
-from ast import pattern
 import librosa
 import numpy as np
 from settings import PITCH_TOLERANCE, HOP_LENGTH, FMIN, FMAX, MINIMUM_DELTA
-from utilities import plot
 
 COMMONLY_DEVOICED_MORA = ["く", "す"]
 

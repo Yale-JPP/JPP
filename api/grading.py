@@ -1,6 +1,6 @@
-from sys import exit, stderr
+# from sys import exit, stderr
 import os.path
-import argparse
+# import argparse
 from settings import BASE_GRADE
 from preprocessing import preliminary_pronunciation_check
 from analysis import grade_pitch_pattern
