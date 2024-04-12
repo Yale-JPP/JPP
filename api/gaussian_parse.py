@@ -182,7 +182,7 @@ class GaussianParse():
         Plots all the waves and graphs. 
         """
         fig, axes = plt.subplots(ncols=2, figsize=(15, 5))
-        fig.canvas.manager.set_window_title(self._kanji)
+        # fig.canvas.manager.set_window_title(self._kanji)
 
         axes[0].plot(self._time, self._gauss_filt, label='gaussian filter')
         axes[1].plot(self._time, self._waveform, label='altered data')
@@ -190,10 +190,11 @@ class GaussianParse():
         axes[0].plot(self._time[self._peaks], self._gauss_filt[self._peaks], "x", label='peaks')
         axes[0].plot(self._time[self._dips], self._gauss_filt[self._dips], "x", label='dips')
 
-        librosa.display.waveshow(self._original, sr=self._sampling_rate)
+        # librosa.display.waveshow(self._original, sr=self._sampling_rate)
         axes[0].legend()
         axes[1].legend()
-        plt.show()
+        plt.savefig("output.jpg")
+        # plt.show()
             
 # if __name__ == "__main__":
 

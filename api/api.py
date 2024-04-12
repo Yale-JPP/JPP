@@ -36,6 +36,7 @@ def parse_syllables():
 
     gp = GaussianParse(wav_path, "しごとです", 5)
     syllable_clips = gp.splice_audio()
+    gp.plot_waves()
     for i, syllable in enumerate(syllable_clips):
         export_filename = "output/" + "仕事" + str(i) + ".wav"
         sf.write(export_filename, syllable, 22050)
