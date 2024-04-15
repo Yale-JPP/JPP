@@ -90,10 +90,26 @@ class GaussianParse():
         
         # Load the waveform
         self._original, self._sampling_rate = librosa.load(file)
+        S_full, phase = librosa.magphase(librosa.stft(self._original))
+        S_filter = librosa.decompose.nn_filter(S_full,
+                                       aggregate=np.median,
+                                       metric='cosine',
+                                       width=int(librosa.time_to_frames(.1, sr=self._sampling_rate)))
+        S_filter = np.minimum(S_full, S_filter)
+        margin_v = 10
+        power = 2
+
+        mask_v = librosa.util.softmask(S_full - S_filter,
+                                    margin_v * S_filter,
+                                    power=power)
+        
+        S_foreground = mask_v * S_full
+        new_y = librosa.istft(S_foreground*phase)
+        sf.write('extracted.wav', new_y, self._sampling_rate)
         # self._original = data
         # self._sampling_rate = sr
         # print(self._original.shape)
-        self._original, self._index = librosa.effects.trim(self._original, top_db=40)
+        self._original, self._index = librosa.effects.trim(new_y, top_db=40)
         # print(self._original.shape)
         self._waveform = np.array(self._original, copy=True)
         self._waveform[self._waveform < 0] = 0
@@ -104,7 +120,7 @@ class GaussianParse():
 
         # Calculate the peaks from the gaussian filtered data
         self._gauss_filt = scipy.ndimage.gaussian_filter1d(self._waveform, sigma=500)
-        self._peaks, _ = scipy.signal.find_peaks(self._gauss_filt, height=.001)
+        self._peaks, _ = scipy.signal.find_peaks(self._gauss_filt, height=.01)
 
         # Calculate the dips
         self._dips = []
