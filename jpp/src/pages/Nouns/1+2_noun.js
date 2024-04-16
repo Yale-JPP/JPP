@@ -1,4 +1,4 @@
-import Recorder from "../components/Recorder";
+import Recorder from "../../components/Recorder";
 
 function OneTwoNoun () {
   return (
