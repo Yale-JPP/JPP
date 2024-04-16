@@ -1,10 +1,14 @@
+import { Box } from "@mui/material";
+import React from "react";
 import Recorder from "../../components/Recorder";
+import Navbar from "../../components/Navbar";
 
 function OneTwoNoun () {
   return (
-    <div>
+    <Box>
+      <Navbar/>
       <Recorder></Recorder>
-    </div>
+    </Box>
   );
 }
 

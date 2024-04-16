@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 import Dropdown from './Dropdown';
-import { AppBar, List, ListItem, Toolbar } from '@mui/material';
+import { AppBar, List, ListItem, Toolbar, useScrollTrigger } from '@mui/material';
 
 const Nouns = [
   {
@@ -60,6 +60,20 @@ const Verbs = [
   }
 ];
 
+
+function ElevationScroll(props) {
+  const { children } = props;
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 0,
+  });
+
+  return React.cloneElement(children, {
+    elevation: trigger ? 4 : 0,
+  });
+}
+
+
 function Navbar() {
   const [nounDropdown, setNounDropdown] = useState(false);
   const [verbDropdown, setVerbDropdown] = useState(false);
@@ -97,8 +111,8 @@ function Navbar() {
   };
 
   return (
-    <>
-      <AppBar className='navbar'>
+    <ElevationScroll>
+      <AppBar className='navbar' position='sticky'>
         <Toolbar>
           <Link to='/' className='navbar-logo'>
             JPP
@@ -149,7 +163,7 @@ function Navbar() {
           </List>
         </Toolbar>
       </AppBar>
-    </>
+    </ElevationScroll>
   );
 }
 
