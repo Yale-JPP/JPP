@@ -2,7 +2,7 @@ import librosa
 import numpy as np
 from settings import PITCH_TOLERANCE, HOP_LENGTH, FMIN, FMAX, MINIMUM_DELTA
 
-COMMONLY_DEVOICED_MORA = ["く", "す"]
+COMMONLY_DEVOICED_MORA = ["く", "す", "っ"]
 
 def get_pitch_info(filename):
     """Given an audio file to load, returns a pitch in midi."""
@@ -115,19 +115,6 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
 
     elif accent_type == 1: # high, drops gradually till end.
         high_pitch = pitches[0]
-        # check if 2nd mora is devoiced or not.
-        if devoiced_check(word[1]) and len(word) > 2:
-            low_pitch = pitches[2]
-        else:
-            low_pitch = pitches[1]
-        delta = high_pitch - low_pitch
-
-        if delta <= 0:
-            jump_accuracy = 0
-        elif delta <= MINIMUM_DELTA:
-            jump_accuracy = error_calculation(expected=MINIMUM_DELTA, actual=delta)
-        else:
-            jump_accuracy = 1
 
         pattern_accuracy = 0
         for i in range(len(pitches[1:])):
@@ -143,7 +130,7 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
 
         pattern_accuracy = pattern_accuracy / len(pitches[1:])
         print(pattern_accuracy)
-        grade = jump_accuracy * pattern_accuracy
+        grade = pattern_accuracy
 
     elif accent_type == 2: # low, high then gradually drops till end
         low_pitch = pitches[0]
