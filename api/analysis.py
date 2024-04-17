@@ -17,6 +17,7 @@ def get_pitch_info(filename):
     max_indexes = np.argmax(magnitudes, axis=0)
     pitches = pitches[max_indexes, range(magnitudes.shape[1])]
 
+    # returning median pitch here. might be better to do some form of gaussian smoothing over the whole clip instead
     median_pitch = pitches[len(pitches) // 2]
     # print(pitches)
     # print(pitches[len(pitches)//2])
@@ -51,9 +52,14 @@ def within_bounds(target, tolerance, value):
 def error_calculation(expected, actual, tolerance=None):
     """Helper function that given an expected and actual value, calculates between (0, 1] how close
     the actual value was to the expected, with 1 being the most accurate and 0 being the least.
+    Is realistically a similarity metric, but misnomered as an error calculation.
     If tolerance is passed in, instead handles a range of expected values."""
+    # expected = actual --- should return 1               --- returns 1
+    # expected < actual --- should return between (0, 1)  --- returns (0, 1)
+    # expected > actual --- should return between (0, 1)  --- returns (0, 1)
     if tolerance is None:
-        return abs(expected - actual) / expected
+        difference = abs(expected - actual)
+        return 1 / (1 + difference)
 
     lower_bound, upper_bound = get_bounds(target=expected, tolerance=tolerance)
 
