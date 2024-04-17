@@ -68,6 +68,6 @@ def preliminary_pronunciation_check(filename, expected_text):
     else:
         result_romaji = utilities.text_to_romaji(result.text)
         expected_romaji = utilities.text_to_romaji(expected_text)
-        grade += CORRECT_LANGUAGE_WEIGHT * utilities.compare_romaji_strings(result_hiragana, expected_hiragana)
+        grade += CORRECT_LANGUAGE_WEIGHT * utilities.compare_romaji_strings(result_romaji, expected_romaji)
 
     return grade
