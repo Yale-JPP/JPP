@@ -4,7 +4,7 @@ import axios from 'axios';
 function TwoTwoNoun() {
   const [word, setWord] = useState('');
   const [accentType, setAccentType] = useState(0);
-  const [audioBlob, setAudioBlob] = useState(null);
+  const [reader, setReader] = useState(null);
   const [grade, setGrade] = useState(null);
 
   const mimeType = "audio/webm";
@@ -13,6 +13,7 @@ function TwoTwoNoun() {
   const [permission, setPermission] = useState(false);
   const [chunks, setChunks] = useState([]);
   const [recording, setRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -76,19 +77,29 @@ function TwoTwoNoun() {
     mediaRecorder.current.onstop = (e) => {
       const audioBlob = new Blob(chunks, { type: mimeType });
       setAudioBlob(audioBlob);
+
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      setReader(reader);
+
     };
   };
 
   const handleGrade = async () => {
-    if (!audioBlob) {
+    if (!reader) {
       setError('Please record audio before grading.');
+      return;
+    }
+
+    if (!word) {
+      setError('Please enter the word before grading.');
       return;
     }
 
     const formData = new FormData();
     formData.append('word', word);
     formData.append('accent_type', accentType);
-    formData.append('sf', audioBlob, 'recorded_audio.wav');
+    formData.append('sf', reader.result);
 
     try {
       const response = await axios.post('/grade', formData, {

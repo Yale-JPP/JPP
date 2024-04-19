@@ -1,12 +1,13 @@
 import time
 import subprocess
+import io
+import wave
 from base64 import b64decode
 from flask import Flask, request, jsonify
 from gaussian_parse import GaussianParse
 from grading import calculate_grade
 from utilities import split_word
 import soundfile as sf
-import io
 
 app = Flask(__name__)
 
@@ -47,22 +48,28 @@ def parse_syllables():
 
 @app.route('/grade', methods=['POST'])
 def grade():
-    data = request.json
-    sf = data.get('sf')
-    word = data.get('word')
-    accent_type = data.get('accent_type')
+    # data = request.form
+    # sf = data.get('sf')
+    # word = data.get('word')
+    # accent_type = data.get('accent_type')
+    word = request.form.get('word')
+    accent_type = request.form.get('accent_type')
+    audio_file = request.form.get('sf')
 
     sf_array = []
     word_array = []
 
-    if sf is None or word is None or accent_type is None:
+    if not (word and accent_type and audio_file):
         return jsonify({'error': 'Missing required data in request'}), 400
 
     word_array, mora_length = split_word(word)
 
-    audio = str(request.json["audio"])
+    audio = str(audio_file)
     audio = audio.split(",")[1]
     audio = b64decode(audio)
+    # print(audio)
+    # audio = str(request.json["audio"])
+    # audio = b64decode(audio)
 
     p = subprocess.run(["ffmpeg", "-y", "-i", "-", "-vn", "audio.wav"], input=audio, capture_output=True)
     if p.returncode != 0:
@@ -70,7 +77,6 @@ def grade():
         print(p.stdout)
         print(p.stderr)
         return {"error": "ffmpeg failed to convert audio"}, 500
-
     wav_path = "audio.wav"
     # data, samplerate = sf.read(io.BytesIO(audio))
 
@@ -80,10 +86,11 @@ def grade():
     if len(syllable_clips) == mora_length:
         for i, syllable in enumerate(syllable_clips):
             export_filename = "output/" + word[i] + ".wav"
+            print(export_filename)
             sf.write(export_filename, syllable, 22050)
             sf_array.append(syllable)
     else:
-        return jsonify("incorrect number of syllables detected.")
+        return jsonify({"error" : "incorrect number of syllables detected."}), 500
 
     # # gp.plot_waves()
     # for i, syllable in enumerate(syllable_clips):
