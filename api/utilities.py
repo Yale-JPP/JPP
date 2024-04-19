@@ -89,5 +89,3 @@ def split_word(input_text):
             word_array.append(char)
             mora_length += 1
     return (word_array, mora_length)
-
-print(split_word("しゅっしんです"))

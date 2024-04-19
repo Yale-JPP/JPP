@@ -8,7 +8,7 @@ import soundfile as sf
 import scipy
 import numpy as np
 import matplotlib.pyplot as plt
-from utilities import vowel, skip, data
+from utilities import vowels, skip, data
 
 
 # I have the word -> I have the # of mora -> dipthong syllables count as one -> do below step
