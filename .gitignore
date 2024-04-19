@@ -186,3 +186,7 @@ sketch
 
 # don't push any database files
 *.db
+
+# don't push certain sound folders
+api/output/
+api/samples/

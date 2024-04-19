@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from difflib import SequenceMatcher
 from settings import HIRAGANA_NOT_FOUND_PENALTY
 
-vowels = ['あ', 'い', 'う', 'え', 'お']
+vowels = ['あ', 'い', 'う', 'え', 'お', 'ん']
 skip = ['ゃ', 'ゅ', 'ょ']
 data = [
     ("午前", "ごぜんです", 5),
@@ -82,7 +82,7 @@ def compare_hiragana_strings(input, expected):
     grade = 1
 
     # how close is the length of the strings?
-    length_difference = len(expected) - len(input)
+    length_difference = abs(len(expected) - len(input))
     grade -= length_difference / len(expected)
 
     for moji in input:
