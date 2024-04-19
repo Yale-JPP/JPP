@@ -88,7 +88,8 @@ def grade():
             export_filename = "output/" + word[i] + ".wav"
             # print(export_filename)
             sf.write(export_filename, syllable, 22050)
-            sf_array.append(syllable)
+            # sf_array.append(syllable)
+            sf_array.append(export_filename)
     else:
         return jsonify({"error" : "incorrect number of syllables detected."}), 500
 
@@ -97,6 +98,8 @@ def grade():
     #     export_filename = "output/" + word + str(i) + ".wav"
     #     sf.write(export_filename, syllable, 22050)
     #     sf_array.append(syllable)
+
+
 
     result = calculate_grade(wav_path, sf_array, word, word_array, accent_type)
 
