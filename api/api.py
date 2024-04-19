@@ -56,12 +56,11 @@ def grade():
     accent_type = request.form.get('accent_type')
     audio_file = request.form.get('sf')
 
-    sf_array = []
-    word_array = []
-
     if not (word and accent_type and audio_file):
         return jsonify({'error': 'Missing required data in request'}), 400
 
+    accent_type = int(accent_type)
+    sf_array = []
     word_array, mora_length = split_word(word)
 
     audio = str(audio_file)
@@ -80,6 +79,8 @@ def grade():
     wav_path = "audio.wav"
     # data, samplerate = sf.read(io.BytesIO(audio))
 
+    print("finished converting to wav")
+
     gp = GaussianParse(wav_path, word, mora_length)
     syllable_clips = gp.splice_audio()
 
@@ -93,14 +94,15 @@ def grade():
     else:
         return jsonify({"error" : "incorrect number of syllables detected."}), 500
 
+    print("finished splicing audio into mora")
     # # gp.plot_waves()
     # for i, syllable in enumerate(syllable_clips):
     #     export_filename = "output/" + word + str(i) + ".wav"
     #     sf.write(export_filename, syllable, 22050)
     #     sf_array.append(syllable)
 
-
-
     result = calculate_grade(wav_path, sf_array, word, word_array, accent_type)
+
+    result = round(result, 1)
 
     return jsonify({'grade': result}), 200
