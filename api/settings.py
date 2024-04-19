@@ -14,6 +14,7 @@ HIRAGANA_NOT_FOUND_PENALTY = 0.9 # penalty coefficient to which a grade should b
 # HOP_SIZE = 64 # lower value means larger rate of sampling
 # FRAME_SIZE = 2048  # values indicate duration of each analysis window
 HOP_LENGTH = 512 # values indicate spacing between consecutive analysis windows
+N_FFT = 1024 # number of bins to use in FFT
 FMIN = 40 # lower bound for frequency sampling
 FMAX = 1000 # upper bound for frequency sampling
 PITCH_TOLERANCE = 0.1 # indicates how close a pitch must be to its expected value. ie. 0.1 means it must be +/- 10% of the expected value.

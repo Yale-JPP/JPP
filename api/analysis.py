@@ -1,6 +1,6 @@
 import librosa
 import numpy as np
-from settings import PITCH_TOLERANCE, HOP_LENGTH, FMIN, FMAX, MINIMUM_DELTA
+from settings import PITCH_TOLERANCE, HOP_LENGTH, FMIN, FMAX, MINIMUM_DELTA, N_FFT
 
 COMMONLY_DEVOICED_MORA = ["く", "す", "っ"]
 
@@ -10,7 +10,7 @@ def get_pitch_info(filename):
     # sr = sampling rate in Hz (ie. 44100 Hz)
     y, sr = librosa.load(filename)
 
-    pitches, magnitudes = librosa.core.piptrack(y=y, sr=sr, hop_length=HOP_LENGTH)
+    pitches, magnitudes = librosa.core.piptrack(y=y, sr=sr, hop_length=HOP_LENGTH, n_fft=N_FFT)
     # pitches, magnitudes = librosa.core.piptrack(y=y, sr=sr, hop_length=HOP_LENGTH, fmin=FMIN, fmax=FMAX)
 
     # get the pitches of the max indexes per time slice
