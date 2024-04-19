@@ -5,7 +5,25 @@ from settings import BASE_GRADE
 from preprocessing import preliminary_pronunciation_check
 from analysis import grade_pitch_pattern
 
-# currently intended to be used in the command line while in development.
+def calculate_grade(sf, sf_array, word, word_array, accent_type):
+    """Grade the input sound clip given 5 arguments:
+    Takes in the sound clip (sf), the full word (word), and the
+    pitch accent pattern type.
+    Also expects to be passed in a set of parallel arrays that has the sound clips and words broken
+    down into its individual mora.
+    Returns a number value between 0 and 100 representing accuracy of pronunciation."""
+    grade = 0
+    coefficient = preliminary_pronunciation_check(sf, word)
+    print(f"Coefficient = {coefficient}")
+
+    if coefficient != 0: # if it is worth it to grade the sound file
+        # start with a base value that will be weighted according to the coefficient found.
+        grade += BASE_GRADE
+        grade += (100 - BASE_GRADE) * grade_pitch_pattern(soundfiles=sf_array, accent_type=accent_type, word=word_array)
+
+    return coefficient * grade
+
+# intended to be used in the command line while in development.
 # def init_parser():
 #     parser = argparse.ArgumentParser(allow_abbrev=False,
 #                                      description='sound analysis')

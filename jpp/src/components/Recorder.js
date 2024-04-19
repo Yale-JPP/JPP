@@ -26,14 +26,14 @@ function Recorder() {
             audio: true,
           },
         )
-  
+
         // Success callback
         .then((stream) => {
           setStream(stream)
           setPermission(true)
           console.log(stream)
         })
-  
+
         // Error callback
         .catch((err) => {
           console.error(`The following getUserMedia error occurred: ${err}`);
@@ -51,7 +51,7 @@ function Recorder() {
     mediaRecorder.current.start();
     console.log(mediaRecorder.current.state);
     console.log("recorder started");
-    
+
     let localChunks = [];
 
     mediaRecorder.current.ondataavailable = (e) => {
@@ -78,7 +78,7 @@ function Recorder() {
         const response = await fetch('/parse-syllables', {
           method: 'POST',
           headers: {
-            "Content-Type": "application/json" 
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             "audio": reader.result
@@ -89,7 +89,7 @@ function Recorder() {
       });
       reader.readAsDataURL(audioBlob);
     };
-    
+
   }
 
   const recordClick = async () => {
@@ -98,8 +98,8 @@ function Recorder() {
     }
     else {
       startRecording();
-    } 
-    
+    }
+
   }
 
   return (

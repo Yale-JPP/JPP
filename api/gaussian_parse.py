@@ -8,7 +8,7 @@ import soundfile as sf
 import scipy
 import numpy as np
 import matplotlib.pyplot as plt
-
+from utilities import vowel, skip, data
 
 
 # I have the word -> I have the # of mora -> dipthong syllables count as one -> do below step
@@ -24,70 +24,28 @@ import matplotlib.pyplot as plt
 
 # Find a way to handle っ. Maybe if there is a plateau for a while, then split properly
 
-# What I need, basivally make a page with words, with the words have the associated mora and furigana so that when 
+# What I need, basivally make a page with words, with the words have the associated mora and furigana so that when
 # We look at the word, we can determine the mora and furigana for the gaussian parse
-
-vowels = ['あ', 'い', 'う', 'え', 'お']
-skip = ['ゃ', 'ゅ', 'ょ']
-data = [
-    ("午前", "ごぜんです", 5),
-    ("旅館", "りょかんです", 5),
-    ("日本", "にほんです", 5),
-    ("旅行", "りょこうです", 5),
-    ("値段", "ねだんです", 5),
-    ("家族", "かぞくです", 5),
-    ("社長", "しゃちょうです", 5),
-    ("自由", "じゆうです", 5),
-    ("試合", "しあいです", 5),
-    ("故障", "こしょうです", 5),
-    ("予定", "よていです", 5),
-    ("地震", "じしんです", 5),
-    ("砂糖", "さとうです", 5),
-    ("美術", "びじゅつです", 5),
-    ("地獄", "じごくです", 5),
-    ("都会", "とかいです", 5),
-    ("去年", "きょねんです", 5),
-    ("二本", "にほんです", 5),
-    ("野球", "やきゅうです", 5),
-    ("気温", "きおんです", 5),
-    ("自分", "じぶんです", 5),
-    ("書道", "しょどうです", 5),
-    ("予習", "よしゅうです", 5),
-    ("佐藤", "さとうです", 5),
-    ("気分", "きぶんです", 5),
-    ("世界", "せかいです", 5),
-    ("仕事", "しごとです", 5),
-    ("予報", "よほうです", 5),
-    ("試験", "しけんです", 5),
-    ("家賃", "やちんです", 5),
-    ("時間", "じかんです", 5),
-    ("写真", "しゃしんです", 5),
-    ("野菜", "やさいです", 5),
-    ("胡椒", "こしょうです", 5),
-    ("授業", "じゅぎょうです", 5)
-]
-
-
 
 class GaussianParse():
     """
     Takes the directory and file name of an audio file.
     Makes the waveform of the audio file in order to find the
-    Guassian filtered curve, the peaks of that curve, and the 
-    dips of that curve. Can separate the audio file into syllables and 
-    plot the graph. 
+    Guassian filtered curve, the peaks of that curve, and the
+    dips of that curve. Can separate the audio file into syllables and
+    plot the graph.
     """
     def __init__(self, file, furigana, mora):
     # def __init__(self, data, sr, furigana, mora):
         # Create the path and find the word
         # self._path = os.path.join(dir, file)
         # self._kanji = file[:-4]
-        
+
         # --------FOR TESTING PURPOSES---------------
         self._furigana = furigana
         self._mora = mora
         # -------------------------------------------
-        
+
         # Load the waveform
         self._original, self._sampling_rate = librosa.load(file)
         S_full, phase = librosa.magphase(librosa.stft(self._original))
@@ -102,7 +60,7 @@ class GaussianParse():
         mask_v = librosa.util.softmask(S_full - S_filter,
                                     margin_v * S_filter,
                                     power=power)
-        
+
         S_foreground = mask_v * S_full
         new_y = librosa.istft(S_foreground*phase)
         sf.write('extracted.wav', new_y, self._sampling_rate)
@@ -113,7 +71,7 @@ class GaussianParse():
         # print(self._original.shape)
         self._waveform = np.array(self._original, copy=True)
         self._waveform[self._waveform < 0] = 0
-        
+
         # Get the time values of each point on the waveform
         self._dur = librosa.get_duration(y=self._waveform)
         self._time = np.linspace(start=0, stop=self._dur, num=math.floor(self._dur * self._sampling_rate))
@@ -169,9 +127,9 @@ class GaussianParse():
                         # print(self._dips)
                 i += 1
                 dip_indexer += 1
-        
+
         # print(self._dips)
-                
+
         if len(self._dips) + 1 == self._mora - 1:
             # Every syllable besides です has been cut
             desu = self._dips[-1]
@@ -186,16 +144,16 @@ class GaussianParse():
             # sf.write(export_filename, newAudio, self._sampling_rate)
             clips.append(newAudio)
             t1 = end_timestamp
-        
+
         # export_filename = "output/" + self._kanji + str(self._mora - 1) + ".wav"
         newAudio = self._original[t1:]
         clips.append(newAudio)
         return clips
         # sf.write(export_filename, newAudio, self._sampling_rate)
-    
+
     def plot_waves(self):
         """
-        Plots all the waves and graphs. 
+        Plots all the waves and graphs.
         """
         fig, axes = plt.subplots(ncols=2, figsize=(15, 5))
         # fig.canvas.manager.set_window_title(self._kanji)
@@ -211,7 +169,7 @@ class GaussianParse():
         axes[1].legend()
         plt.savefig("output.jpg")
         # plt.show()
-            
+
 # if __name__ == "__main__":
 
 #     dir_name = '1+2 Noun/'
