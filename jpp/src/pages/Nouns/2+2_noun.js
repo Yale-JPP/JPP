@@ -79,17 +79,6 @@ function TwoTwoNoun() {
     };
   };
 
-  const handlePlayback = () => {
-    if (!audioBlob) {
-      setError('Please record audio before playback.');
-      return;
-    }
-
-    const audioURL = URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioURL);
-    audio.play();
-  };
-
   const handleGrade = async () => {
     if (!audioBlob) {
       setError('Please record audio before grading.');
@@ -133,7 +122,6 @@ function TwoTwoNoun() {
       <button onClick={handleRecord}>
         {recording ? 'Stop Recording' : 'Start Recording'}
       </button>
-      <button onClick={handlePlayback}>Playback</button>
       <button onClick={handleGrade}>Grade</button>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {audioBlob && <audio src={URL.createObjectURL(audioBlob)} controls />}
