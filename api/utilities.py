@@ -1,6 +1,8 @@
 import pykakasi
 import numpy as np
 import matplotlib.pyplot as plt
+from difflib import SequenceMatcher
+from settings import HIRAGANA_NOT_FOUND_PENALTY
 
 vowels = ['あ', 'い', 'う', 'え', 'お']
 skip = ['ゃ', 'ゅ', 'ょ']
@@ -72,6 +74,27 @@ def text_to_romaji(input_text):
     for word in info:
         romaji_string += word['hepburn']
     return romaji_string
+
+
+def compare_hiragana_strings(input, expected):
+    """Given two hiragana strings, compare how close the input text is to the expected test.
+    Returns a value between 0 and 1."""
+    grade = 1
+
+    # how close is the length of the strings?
+    length_difference = len(expected) - len(input)
+    grade -= length_difference / len(expected)
+
+    for moji in input:
+        if moji not in expected:
+            grade *= HIRAGANA_NOT_FOUND_PENALTY
+
+    return grade
+
+def compare_romaji_strings(input, expected):
+    """Given two hiragana strings, compare how close the input text is to the expected test.
+    Returns a value between 0 and 1."""
+    return SequenceMatcher(None, input, expected).ratio()
 
 def split_word(input_text):
     """Given hiragana input, split into individual mora and return a tuple (word_array, mora_length)

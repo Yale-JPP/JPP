@@ -267,8 +267,8 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
 
     return grade
 
-# for testing.
-soundfiles = ["samples/ga.wav", "samples/ku.wav", "samples/sei.wav", "samples/de.wav", "samples/su.wav"]
-accent_type = 0
-word = ["が", "く", "せい", "で", "す"]
-result = grade_pitch_pattern(soundfiles, accent_type, word)
+# # for testing.
+# soundfiles = ["samples/ga.wav", "samples/ku.wav", "samples/sei.wav", "samples/de.wav", "samples/su.wav"]
+# accent_type = 0
+# word = ["が", "く", "せい", "で", "す"]
+# result = grade_pitch_pattern(soundfiles, accent_type, word)

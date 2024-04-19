@@ -1,27 +1,6 @@
-from difflib import SequenceMatcher
 import whisper # consider local import to cut down on import time.
-from settings import SELECTED_MODEL, CORRECT_LANGUAGE_WEIGHT, CORRECT_TEXT_WEIGHT, HIRAGANA_NOT_FOUND_PENALTY
+from settings import SELECTED_MODEL, CORRECT_LANGUAGE_WEIGHT, CORRECT_TEXT_WEIGHT
 import utilities
-
-def compare_hiragana_strings(input, expected):
-    """Given two hiragana strings, compare how close the input text is to the expected test.
-    Returns a value between 0 and 1."""
-    grade = 1
-
-    # how close is the length of the strings?
-    length_difference = len(expected) - len(input)
-    grade -= length_difference / len(expected)
-
-    for moji in input:
-        if moji not in expected:
-            grade *= HIRAGANA_NOT_FOUND_PENALTY
-
-    return grade
-
-def compare_romaji_strings(input, expected):
-    """Given two hiragana strings, compare how close the input text is to the expected test.
-    Returns a value between 0 and 1."""
-    return SequenceMatcher(None, input, expected).ratio()
 
 def preliminary_pronunciation_check(filename, expected_text):
     """Uses whisper to check to see if the base level of pronunciation is good enough to be understood by Speech-to-Text AI.

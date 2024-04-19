@@ -86,7 +86,7 @@ def grade():
     if len(syllable_clips) == mora_length:
         for i, syllable in enumerate(syllable_clips):
             export_filename = "output/" + word[i] + ".wav"
-            print(export_filename)
+            # print(export_filename)
             sf.write(export_filename, syllable, 22050)
             sf_array.append(syllable)
     else:
@@ -98,6 +98,6 @@ def grade():
     #     sf.write(export_filename, syllable, 22050)
     #     sf_array.append(syllable)
 
-    result = calculate_grade(sf, sf_array, word, word_array, accent_type)
+    result = calculate_grade(wav_path, sf_array, word, word_array, accent_type)
 
     return jsonify({'grade': result}), 200
