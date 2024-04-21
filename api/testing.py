@@ -325,10 +325,14 @@ def grade(word, accent_type, audio_file):
             # sf_array.append(syllable)
             sf_array.append(export_filename)
     else:
-        print(f"error with {word} -- incorrect syllable split")
+        print(f"""error with {word} -- incorrect syllable split
+              """)
         return
 
     result = calculate_grade(audio_file, sf_array, word, word_array, accent_type)
+
+    if result is None:
+        return
 
     coeff = result[0]
     pitch_grade = result[1]
@@ -350,6 +354,10 @@ def print_grade_info(data):
     accent_type = int(data[2])
 
     result = grade(word, accent_type, audio_file)
+
+    if result is None:
+        return
+
     coeff = result[0]
     pitch_grade = result[1]
     overall_grade = result[2]
@@ -381,10 +389,10 @@ Pitch grade α = {round(pitch_grade / 100, 3)}
 
 if __name__ == '__main__':
     # individual test.
-    print_grade_info(dataset[1])
+    # print_grade_info(dataset[1])
 
     # full test
-    # for data in dataset:
-    #     print_grade_info(data)
+    for data in dataset:
+        print_grade_info(data)
 
-    print(dataset[1])
+    # print(dataset[1])
