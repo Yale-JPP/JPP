@@ -78,7 +78,7 @@ class GaussianParse():
 
         # Calculate the peaks from the gaussian filtered data
         self._gauss_filt = scipy.ndimage.gaussian_filter1d(self._waveform, sigma=500)
-        self._peaks, _ = scipy.signal.find_peaks(self._gauss_filt, height=.01)
+        self._peaks, _ = scipy.signal.find_peaks(self._gauss_filt, height=.005)
 
         # Calculate the dips
         self._dips = []
@@ -172,15 +172,17 @@ class GaussianParse():
 
 # if __name__ == "__main__":
 
-#     dir_name = '1+2 Noun/'
-#     # entries = os.listdir(dir_name)
+# #     dir_name = '1+2 Noun/'
+# #     # entries = os.listdir(dir_name)
 
-#     for entry in data:
-#     # for entry in entries:
-#         # print(entry[:-4], end=" ")
-#         gp = GaussianParse(dir_name, entry[0] + ".wav", entry[1], entry[2])
-#         gp.splice_audio()
-#         gp.plot_waves()
-#     # gp = GaussianParse('1+2 Noun/', '世界.wav', "せかいです", 5)
-#     # gp.splice_audio()
+# #     for entry in data:
+# #     # for entry in entries:
+# #         # print(entry[:-4], end=" ")
+# #         gp = GaussianParse(dir_name, entry[0] + ".wav", entry[1], entry[2])
+# #         gp.splice_audio()
+# #         gp.plot_waves()
+#     gp = GaussianParse('samples/旅館.wav', "りょかんです", 5)
 #     # gp.plot_waves()
+
+#     gp.splice_audio()
+#     gp.plot_waves()
