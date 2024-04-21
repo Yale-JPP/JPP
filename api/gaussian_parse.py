@@ -63,13 +63,14 @@ class GaussianParse():
 
         S_foreground = mask_v * S_full
         new_y = librosa.istft(S_foreground*phase)
-        sf.write('extracted.wav', new_y, self._sampling_rate)
+        # sf.write('extracted.wav', new_y, self._sampling_rate)
         # self._original = data
         # self._sampling_rate = sr
         # print(self._original.shape)
-        self._original, self._index = librosa.effects.trim(new_y, top_db=40)
+        self._trimmed, self._index = librosa.effects.trim(new_y, top_db=40)
+        self._original = self._original[self._index[0]:self._index[1]]
         # print(self._original.shape)
-        self._waveform = np.array(self._original, copy=True)
+        self._waveform = np.array(self._trimmed, copy=True)
         self._waveform[self._waveform < 0] = 0
 
         # Get the time values of each point on the waveform
@@ -95,6 +96,9 @@ class GaussianParse():
             # print(self._dips)
             i = 0
             dip_indexer = 0
+            # So the word does not include desu
+            # However if the desu peak is not detected, the program breaks
+            # This program assumes that desu is found in the audio clip
             while i < len(self._furigana[:-2]):
                 # If the moji combines with the previous moji to make one mora
                 if self._furigana[i] in skip:
@@ -105,16 +109,13 @@ class GaussianParse():
                 # If there is a vowel that is not the first letter
                 if self._furigana[i] in vowels and i != 0:
                     # Count the number of vowels to split the clip by
-                    # start_i = i
                     vowel_chain = 1
-                    # print("start_i = " + str(start_i))
                     while self._furigana[i + 1] in vowels:
                         vowel_chain += 1
                         i += 1
-                    # vowel_chain = i - start_i + 1
                     # print("vowel chain = " + str(vowel_chain))
                     # Find the duration that we should split the clip by
-                    bad_dip_end = self._dips[dip_indexer - 1]
+                    bad_dip_end = len(self._gauss_filt) if dip_indexer - 1 >= len(self._dips) else self._dips[dip_indexer - 1]
                     # print("bad_dip_end = " + str(bad_dip_end))
                     bad_dip_start = 0 if dip_indexer - 2 < 0 else self._dips[dip_indexer - 2]
                     # print("bad_dip_start = " + str(bad_dip_start))
@@ -139,17 +140,17 @@ class GaussianParse():
         t1 = 0
         clips = []
         for i, end_timestamp in enumerate(self._dips):
-            # export_filename = "output/" + self._kanji + str(i) + ".wav"
+            # export_filename = "output/" + self._furigana + str(i) + ".wav"
             newAudio = self._original[t1:end_timestamp]
             # sf.write(export_filename, newAudio, self._sampling_rate)
             clips.append(newAudio)
             t1 = end_timestamp
 
-        # export_filename = "output/" + self._kanji + str(self._mora - 1) + ".wav"
+        # export_filename = "output/" + self._furigana + str(self._mora - 1) + ".wav"
         newAudio = self._original[t1:]
         clips.append(newAudio)
-        return clips
         # sf.write(export_filename, newAudio, self._sampling_rate)
+        return clips
 
     def plot_waves(self):
         """
@@ -181,8 +182,8 @@ class GaussianParse():
 # #         gp = GaussianParse(dir_name, entry[0] + ".wav", entry[1], entry[2])
 # #         gp.splice_audio()
 # #         gp.plot_waves()
-#     gp = GaussianParse('samples/旅館.wav', "りょかんです", 5)
+    # gp = GaussianParse('samples/旅館.wav', "りょかんです", 5)
 #     # gp.plot_waves()
 
-#     gp.splice_audio()
-#     gp.plot_waves()
+    # gp.splice_audio()
+    # gp.plot_waves()
