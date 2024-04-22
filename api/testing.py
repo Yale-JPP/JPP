@@ -587,8 +587,11 @@ if __name__ == '__main__':
             type_4s.append(data)
 
     type_0s = []
+    type_1s = []
+    type_2s = []
+    type_3s = []
 
-    sorted_data = [type_0s, type_1s, type_2s, type_3s]
+    sorted_data = [type_0s, type_1s, type_2s, type_3s, type_4s]
     for accent_type in sorted_data:
         print(accent_type)
 
