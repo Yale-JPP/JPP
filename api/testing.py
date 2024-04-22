@@ -68,8 +68,6 @@ types = [
     3, 1, 0, 1, 1, 0, 0, 1, 0, 0
 ]
 
-# print(len(types), len(readings), len(filenames))
-
 type_0s = []
 type_1s = []
 type_2s = []
@@ -527,7 +525,8 @@ def plot(file_num):
     plt.savefig(f"data{str(file_num)}.png")
     file_num += 1
 
-    if len(overall_grades_np) != 0: print(min(overall_grades_np), max(overall_grades_np))
+    if len(overall_grades_np) != 0:
+        print(min(overall_grades_np), max(overall_grades_np), np.average(overall_grades_np))
 
     plt.clf()
     values, bins, bars = plt.hist(pitch_grades_np, bins=[0, 0.2, 0.4, 0.6, 0.8, 1])
@@ -537,7 +536,7 @@ def plot(file_num):
     plt.bar_label(bars, fontsize=10, color='navy')
     plt.savefig(f"data{str(file_num)}.png")
     file_num += 1
-    if len(pitch_grades_np) != 0: print(min(pitch_grades_np), max(pitch_grades_np))
+    if len(pitch_grades_np) != 0: print(min(pitch_grades_np), max(pitch_grades_np), np.average(pitch_grades_np))
 
     plt.clf()
     values, bins, bars = plt.hist(coefficients_np, bins=[0, 0.2, 0.4, 0.6, 0.8, 1])
@@ -547,7 +546,7 @@ def plot(file_num):
     plt.bar_label(bars, fontsize=10, color='navy')
     plt.savefig(f"data{str(file_num)}.png")
     file_num += 1
-    if len(coefficients_np) != 0: print(min(coefficients_np), max(coefficients_np))
+    if len(coefficients_np) != 0: print(min(coefficients_np), max(coefficients_np), np.average(coefficients_np))
 
     plt.clf()
     values, bins, bars = plt.hist(jump_accuracies_np, bins=[-.5,.5,1.5], ec="k")
@@ -558,7 +557,7 @@ def plot(file_num):
     plt.bar_label(bars, fontsize=10, color='navy')
     plt.savefig(f"data{str(file_num)}.png")
     file_num += 1
-    if len(jump_accuracies_np) != 0: print(min(jump_accuracies_np), max(jump_accuracies_np))
+    if len(jump_accuracies_np) != 0: print(min(jump_accuracies_np), max(jump_accuracies_np), np.average(jump_accuracies_np))
 
     plt.clf()
     values, bins, bars = plt.hist(pattern_accuracies_np, bins=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
@@ -568,7 +567,7 @@ def plot(file_num):
     plt.bar_label(bars, fontsize=10, color='navy')
     plt.savefig(f"data{str(file_num)}.png")
     file_num += 1
-    if len(pattern_accuracies_np) != 0: print(min(pattern_accuracies_np), max(pattern_accuracies_np))
+    if len(pattern_accuracies_np) != 0: print(min(pattern_accuracies_np), max(pattern_accuracies_np), np.average(pattern_accuracies_np))
 
 if __name__ == '__main__':
 #     dataset = []
@@ -610,7 +609,11 @@ if __name__ == '__main__':
 #               """)
 #         print(f"Finished accent type {i}.")
 #         clear_arrays()
+    print(len(types), len(readings), len(filenames))
+
     file_num = 0
+
+    combined_data = [[], [], [], [], []]
 
     # type 0
     overall_grades = [0.847, 0.775, None, None, None, 0.723, 0.633, 1.0, None, 0.716, None, 0.598, None, 0.952, None, 0.843, 0.623, None, None, None, 0.847, 0.902, 0.63, 0.676, 0.775, 0.679, None, 0.111, None, None, 1.0, 0.953, None, 0.931, 1.0, 0.93, 0.638, None, None, None, 0.776, 0.708, 0.897, None, 0.904, 0.931, 0.57, None, 0.723, None, None, 0.896, None, 0.9, 0.931, 1.0, None, None, None, 0.679, 0.872, None, 0.716, 0.629, None, 0.266, 0.886, 0.775, 0.931, None, None, 0.605, None, None, None, None, 0.799, None, 0.862, 0.575, 0.86, 1.0, None, None, None, None, 0.931]
@@ -622,6 +625,13 @@ if __name__ == '__main__':
     plot(file_num)
     file_num += 5
 
+    combined_data[0] = combined_data[0] + overall_grades
+    combined_data[1] = combined_data[1] + pitch_grades
+    combined_data[2] = combined_data[2] + coefficients
+    combined_data[3] = combined_data[3] + jump_accuracies
+    combined_data[4] = combined_data[4] + pattern_accuracies
+
+
     # type 1
     overall_grades = [0.682, None, 0.687, None, None, 0.656, 0.673, 0.638, 0.605, 0.726, None, 0.727, 0.75, 0.693, 0.668, 0.796, None, 0.748, 0.699, 0.736, 0.598, 0.725, None, 0.673, 0.802, 0.791, 0.816, 0.753, 0.77, 0.623, 0.842, 0.692, 0.654, 0.641]
     pitch_grades = [0.738, None, 0.687, None, None, 0.781, 0.673, 0.751, 0.605, 0.726, None, 0.727, 0.75, 0.693, 0.767, 0.796, None, 0.748, 0.699, 0.736, 0.696, 0.725, None, 0.673, 0.802, 0.791, 0.883, 0.753, 0.77, 0.764, 0.842, 0.692, 0.758, 0.719]
@@ -631,6 +641,12 @@ if __name__ == '__main__':
 
     plot(file_num)
     file_num += 5
+
+    combined_data[0] = combined_data[0] + overall_grades
+    combined_data[1] = combined_data[1] + pitch_grades
+    combined_data[2] = combined_data[2] + coefficients
+    combined_data[3] = combined_data[3] + jump_accuracies
+    combined_data[4] = combined_data[4] + pattern_accuracies
 
     # type 2
     overall_grades = [None, None, 0.67, None, None, 0.797, 0.885, 0.875, None]
@@ -642,9 +658,35 @@ if __name__ == '__main__':
     plot(file_num)
     file_num += 5
 
+    combined_data[0] = combined_data[0] + overall_grades
+    combined_data[1] = combined_data[1] + pitch_grades
+    combined_data[2] = combined_data[2] + coefficients
+    combined_data[3] = combined_data[3] + jump_accuracies
+    combined_data[4] = combined_data[4] + pattern_accuracies
+
     # type 3
     overall_grades = [0.606, 0.852, 0.833, 0.605, 0.89, 0.874, 0.612]
     pitch_grades = [0.606, 0.852, 0.833, 0.648, 0.89, 0.874, 0.612]
     coefficients = [1.0, 1.0, 1.0, 0.933, 1.0, 1.0, 1.0]
     jump_accuracies = [0, 1, 1, 0, 1, 1, 0]
     pattern_accuracies = [0.248, 0.341, 0.258, 0.436, 0.51, 0.44, 0.276]
+
+    plot(file_num)
+    file_num += 5
+
+    combined_data[0] = combined_data[0] + overall_grades
+    combined_data[1] = combined_data[1] + pitch_grades
+    combined_data[2] = combined_data[2] + coefficients
+    combined_data[3] = combined_data[3] + jump_accuracies
+    combined_data[4] = combined_data[4] + pattern_accuracies
+
+
+    # all types. note that type 4 has no data :(
+    overall_grades = combined_data[0]
+    pitch_grades = combined_data[1]
+    coefficients = combined_data[2]
+    jump_accuracies = combined_data[3]
+    pattern_accuracies = combined_data[4]
+
+    plot(file_num)
+    file_num += 5
