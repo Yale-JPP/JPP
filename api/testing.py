@@ -73,7 +73,7 @@ type_0s =  [('りょかんです', '旅館.wav', 0),
 
 type_1s = [('ごぜんです', '午前.wav', 1),
            ('かぞくです', '家族.wav', 1),
-           (' びじゅつです', '美術.wav', 1),
+           ('びじゅつです', '美術.wav', 1),
            ('きょねんです', '去年.wav', 1),
            ('にほんです', '二本.wav', 1),
            ('しょどうです', '書道.wav', 1),
@@ -208,7 +208,7 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
                 pattern_accuracy += error_calculation(high_pitch, pitch, PITCH_TOLERANCE)
 
         pattern_accuracy = pattern_accuracy / len(pitches[2:])
-        grade = jump_accuracy * pattern_accuracy
+        grade = (jump_accuracy + pattern_accuracy) / 2
 
     elif accent_type == 1: # high, drops gradually till end.
         high_pitch = pitches[0]
@@ -257,7 +257,7 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
                 high_pitch = pitches[i] # to be kinder with grading, in case they accidentally went up.
         pattern_accuracy = pattern_accuracy / len(pitches[2:])
 
-        grade = jump_accuracy * pattern_accuracy
+        grade = (jump_accuracy + pattern_accuracy) / 2
 
     elif accent_type == 3: # low, high, high, then gradually drops till end.
         # requires a word of at least 3 mora to be type 3.
@@ -278,8 +278,7 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
         else:
             jump_accuracy = 1
 
-        pattern_accuracy = 0
-        coefficient = error_calculation(high_pitch, high_pitch2, PITCH_TOLERANCE)
+        pattern_accuracy = error_calculation(high_pitch, high_pitch2, PITCH_TOLERANCE)
         # high_pitch = max(high_pitch, high_pitch2) # nicer algorithm
         high_pitch = high_pitch2 # stricter algorithm
 
@@ -293,9 +292,9 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
             else:
                 pattern_accuracy += error_calculation(lower_bound, pitches[i])
                 high_pitch = pitches[i] # to be kinder with grading, in case they accidentally went up.
-        pattern_accuracy = pattern_accuracy / len(pitches[2:])
+        pattern_accuracy = pattern_accuracy / (len(pitches[2:] + 1))
 
-        grade = jump_accuracy * coefficient * pattern_accuracy
+        grade = (jump_accuracy + pattern_accuracy) / 2
 
     elif accent_type == 4: # low, hi, then drop on end of word (ie. on "de" of "desu")
         # assumes at least 2-mora word + de-su for 4 minimum mora.
@@ -354,7 +353,7 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
             pattern_accuracy += error_calculation(lower_bound, pitches[-1])
 
         pattern_accuracy = pattern_accuracy / (len(pitches[2:-2]) + 1) # add one for last drop pattern.
-        grade = jump_accuracy * pattern_accuracy
+        grade = (jump_accuracy + pattern_accuracy) / 2
 
     return grade, jump_accuracy, pattern_accuracy, coefficient
 
@@ -396,11 +395,11 @@ def grade(word, accent_type, audio_file):
     return data
 
 def clear_arrays():
-    overall_grades = []
-    coefficients = []
-    pitch_grades = []
-    jump_accuracies = []
-    pattern_accuracies = []
+    overall_grades.clear()
+    coefficients.clear()
+    pitch_grades.clear()
+    jump_accuracies.clear()
+    pattern_accuracies.clear()
 
 def save_grade_info(data):
     word = data[0] # word in hiragana.
@@ -483,7 +482,7 @@ def plot(file_num):
     pattern_accuracies_np = np.array(list(filter(lambda x: x is not None, pattern_accuracies)))
 
     plt.clf()
-    plt.hist(overall_grades_np, bins=[min(overall_grades_np), 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    plt.hist(overall_grades_np, bins=[0.5, 0.6, 0.7, 0.8, 0.9, 1])
     plt.xlabel('Grades')
     plt.ylabel('Frequency')
     plt.title('Overall Grade')
@@ -491,7 +490,7 @@ def plot(file_num):
     file_num += 1
 
     plt.clf()
-    plt.hist(pitch_grades_np, bins=[min(overall_grades_np), 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    plt.hist(pitch_grades_np, bins=[0.5, 0.6, 0.7, 0.8, 0.9, 1])
     plt.xlabel('Grades')
     plt.ylabel('Frequency')
     plt.title('Pitch Grade')
@@ -507,7 +506,7 @@ def plot(file_num):
     file_num += 1
 
     plt.clf()
-    plt.hist(coefficients_np, bins=[0, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    plt.hist(coefficients_np, bins=[0.8, 0.9, 1])
     plt.xlabel('Grades')
     plt.ylabel('Frequency')
     plt.title('Coefficients')
@@ -515,7 +514,8 @@ def plot(file_num):
     file_num += 1
 
     plt.clf()
-    plt.hist(jump_accuracies_np, bins=[0, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    plt.hist(jump_accuracies_np, bins=[-.5,.5,1.5], ec="k")
+    plt.xticks((0,1))
     plt.xlabel('Grades')
     plt.ylabel('Frequency')
     plt.title('Jump Accuracy')
@@ -523,7 +523,7 @@ def plot(file_num):
     file_num += 1
 
     plt.clf()
-    plt.hist(pattern_accuracies_np, bins=[0, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    plt.hist(pattern_accuracies_np, bins=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
     plt.xlabel('Grades')
     plt.ylabel('Frequency')
     plt.title('Pattern Accuracy')
@@ -533,20 +533,20 @@ def plot(file_num):
 if __name__ == '__main__':
     file_num = 0
 
-    # a, b = split_word("せかいです")
+    # a, b = split_word("びじゅつです")
     # print(a, b)
 
-    # gp = GaussianParse("samples/世界.wav", "せかいです", b)
+    # gp = GaussianParse("samples/美術.wav", "びじゅつです", b)
     # syllable_clips = gp.splice_audio()
     # gp.plot_waves()
     # print(syllable_clips)
     # print(len(syllable_clips))
     # for i, syllable in enumerate(syllable_clips):
-    #     export_filename = "output/" + "sekai" + str(i) + ".wav"
+    #     export_filename = "output/" + "びじゅつ" + str(i) + ".wav"
     #     sf.write(export_filename, syllable, 22050)
 
     # individual test.
-    # print_grade_info(dataset[1])
+    # print_grade_info(dataset[13])
 
     # full test
     # for data in dataset:
@@ -564,21 +564,22 @@ if __name__ == '__main__':
 
     # plot(file_num)
 
-    # sorted_data = [type_0s, type_1s, type_2s, type_3s]
-    # for i, accent_data in enumerate(sorted_data):
-    #     for j, data in enumerate(accent_data):
-    #         save_grade_info(data)
-    #         # print(accent_data[j][0])
-    #     print(f"""{overall_grades},
-    #           {pitch_grades},
-    #           {coefficients},
-    #           {jump_accuracies},
-    #           {pattern_accuracies}
-    #           """)
-    #     print(f"Finished accent type {i}.")
-    #     # plot(file_num)
+    sorted_data = [type_0s, type_1s, type_2s, type_3s]
+    for i, accent_data in enumerate(sorted_data):
+        for j, data in enumerate(accent_data):
+            save_grade_info(data)
+            # print(accent_data[j][0])
+        print(f"""{overall_grades},
+{pitch_grades},
+{coefficients},
+{jump_accuracies},
+{pattern_accuracies}
+              """)
+        print(f"Finished accent type {i}.")
+        clear_arrays()
+        # plot(file_num)
 
-    # type 0
+    # # type 0
     # overall_grades = [0.653, 1.0, 0.862, 0.72, 0.55, None, 0.862, 1.0, 1.0, 0.861, 0.55, 0.784, 0.9, 1.0, 1.0, 0.724, 0.55, 0.55]
     # pitch_grades = [0.725, 1.0, 0.862, 0.72, 0.55, None, 0.862, 1.0, 1.0, 0.861, 0.55, 0.817, 1.0, 1.0, 1.0, 0.724, 0.55, 0.55]
     # coefficients = [0.9, 1.0, 1.0, 1.0, 1.0, None, 1.0, 1.0, 1.0, 1.0, 1.0, 0.96, 0.9, 1.0, 1.0, 1.0, 1.0, 1.0]
@@ -587,14 +588,16 @@ if __name__ == '__main__':
     # plot(file_num)
     # file_num += 5
 
-    # overall_grades = [0.623, 0.802, None, None, 0.598, 0.654, 0.605, 0.693, None, 0.842, 0.682]
-    # pitch_grades = [0.764, 0.802, None, None, 0.696, 0.758, 0.605, 0.693, None, 0.842, 0.738]
-    # coefficients = [0.816, 1.0, None, None, 0.859, 0.862, 1.0, 1.0, None, 1.0, 0.924]
-    # jump_accuracies = [None, None, None]
-    # pattern_accuracies = [0.475, 0.561, None, None, 0.325, 0.462, 0.121, 0.317, None, 0.648, 0.417]
+    # # type 1
+    # overall_grades = [0.623, 0.802, 0.668, None, 0.598, 0.654, 0.605, 0.693, None, 0.842, 0.682]
+    # pitch_grades = [0.764, 0.802, 0.767, None, 0.696, 0.758, 0.605, 0.693, None, 0.842, 0.738]
+    # coefficients = [0.816, 1.0, 0.87, None, 0.859, 0.862, 1.0, 1.0, None, 1.0, 0.924]
+    # jump_accuracies = [None, None, None, None, None, None, None, None, None, None, None]
+    # pattern_accuracies = [0.475, 0.561, 0.483, None, 0.325, 0.462, 0.121, 0.317, None, 0.648, 0.417]
     # plot(file_num)
     # file_num += 5
 
+    # # type 2
     # overall_grades = [0.735, None, 0.751, 0.55, 0.769]
     # pitch_grades = [0.856, None, 0.751, 0.55, 0.769]
     # coefficients = [0.859, None, 1.0, 1.0, 1.0]

@@ -111,7 +111,7 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
 
         pattern_accuracy = pattern_accuracy / len(pitches[2:])
         print(jump_accuracy, pattern_accuracy)
-        grade = jump_accuracy * pattern_accuracy
+        grade = (jump_accuracy + pattern_accuracy) / 2
 
     elif accent_type == 1: # high, drops gradually till end.
         high_pitch = pitches[0]
@@ -161,7 +161,7 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
                 high_pitch = pitches[i] # to be kinder with grading, in case they accidentally went up.
         pattern_accuracy = pattern_accuracy / len(pitches[2:])
 
-        grade = jump_accuracy * pattern_accuracy
+        grade = (jump_accuracy + pattern_accuracy) / 2
 
     elif accent_type == 3: # low, high, high, then gradually drops till end.
         # requires a word of at least 3 mora to be type 3.
@@ -182,8 +182,7 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
         else:
             jump_accuracy = 1
 
-        pattern_accuracy = 0
-        coefficient = error_calculation(high_pitch, high_pitch2, PITCH_TOLERANCE)
+        pattern_accuracy = error_calculation(high_pitch, high_pitch2, PITCH_TOLERANCE)
         # high_pitch = max(high_pitch, high_pitch2) # nicer algorithm
         high_pitch = high_pitch2 # stricter algorithm
 
@@ -197,10 +196,10 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
             else:
                 pattern_accuracy += error_calculation(lower_bound, pitches[i])
                 high_pitch = pitches[i] # to be kinder with grading, in case they accidentally went up.
-        pattern_accuracy = pattern_accuracy / len(pitches[2:])
+        pattern_accuracy = pattern_accuracy / (len(pitches[2:] + 1))
 
-        print(jump_accuracy, coefficient, pattern_accuracy)
-        grade = jump_accuracy * coefficient * pattern_accuracy
+        print(jump_accuracy, pattern_accuracy)
+        grade = (jump_accuracy +  pattern_accuracy) / 2
 
     elif accent_type == 4: # low, hi, then drop on end of word (ie. on "de" of "desu")
         # assumes at least 2-mora word + de-su for 4 minimum mora.
@@ -260,7 +259,7 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
 
         pattern_accuracy = pattern_accuracy / (len(pitches[2:-2]) + 1) # add one for last drop pattern.
         print(jump_accuracy, pattern_accuracy)
-        grade = jump_accuracy * pattern_accuracy
+        grade = (jump_accuracy + pattern_accuracy) / 2
 
     else:
         print("Invalid accent type.")
