@@ -392,11 +392,17 @@ def grade(word, accent_type, audio_file):
     except IndexError:
         print(f"""error with {word} -- index error""")
         return
+    except TypeError:
+        print(f"""type error found with word {word}?""")
+        return
+    except:
+        print(f"""some other error found with word {word}.""")
+        return
 
     if len(syllable_clips) == mora_length:
         for i, syllable in enumerate(syllable_clips):
             export_filename = "output/" + word_array[i] + ".wav"
-            print(export_filename)
+            # print(export_filename)
             sf.write(export_filename, syllable, 22050)
             # sf_array.append(syllable)
             sf_array.append(export_filename)
@@ -580,13 +586,14 @@ if __name__ == '__main__':
         elif data[2] == 4:
             type_4s.append(data)
 
+    type_0s = []
+
     sorted_data = [type_0s, type_1s, type_2s, type_3s]
     for accent_type in sorted_data:
-        print(sorted_data)
+        print(accent_type)
 
     for i, accent_data in enumerate(sorted_data):
         for j, data in enumerate(accent_data):
-            print("hi")
             save_grade_info(data)
             # print(accent_data[j][0])
         print(f"""{overall_grades},
@@ -597,5 +604,5 @@ if __name__ == '__main__':
               """)
         print(f"Finished accent type {i}.")
         clear_arrays()
-        plot(file_num)
-        file_num += 5
+        # plot(file_num)
+        # file_num += 5
