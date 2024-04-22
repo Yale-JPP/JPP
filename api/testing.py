@@ -557,37 +557,6 @@ def plot(file_num):
 if __name__ == '__main__':
     file_num = 0
 
-    # a, b = split_word("びじゅつです")
-    # print(a, b)
-
-    # gp = GaussianParse("samples/美術.wav", "びじゅつです", b)
-    # syllable_clips = gp.splice_audio()
-    # gp.plot_waves()
-    # print(syllable_clips)
-    # print(len(syllable_clips))
-    # for i, syllable in enumerate(syllable_clips):
-    #     export_filename = "output/" + "びじゅつ" + str(i) + ".wav"
-    #     sf.write(export_filename, syllable, 22050)
-
-    # individual test.
-    # print_grade_info(dataset[13])
-
-    # full test
-    # for data in dataset:
-    #     print_grade_info(data)
-
-    # results from first batch
-    # overall_grades = [62.324, 65.281, 73.516, 100.0, 86.156, 80.229, 72.033, None, 55.0, None, 86.208, 100.0, 75.059, 66.763, 70.597, 100.0, None, 59.823, 86.143, 55.0, 78.391, 65.372, 90.0, 60.458, 69.287, None, 100.0, 100.0, 55.0, 84.168, 72.421, 55.0, 55.0, 76.949, 68.152]
-    # coefficients = [0.816, 0.9, 0.859, 1.0, 1.0, 1.0, 1.0, None, 1.0, None, 1.0, 1.0, 1.0, 0.87, 1.0, 1.0, None, 0.859, 1.0, 1.0, 0.96, 0.862, 0.9, 1.0, 1.0, None, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.924]
-    # pitch_grades = [0.764, 0.725, 0.856, 1.0, 0.862, 0.802, 0.72, None, 0.55, None, 0.862, 1.0, 0.751, 0.767, 0.706, 1.0, None, 0.696, 0.861, 0.55, 0.817, 0.758, 1.0, 0.605, 0.693, None, 1.0, 1.0, 0.55, 0.842, 0.724, 0.55, 0.55, 0.769, 0.738]
-    # # x_axis = range(0, 35)
-
-    # for i, grade_value in enumerate(overall_grades):
-    #     if grade_value is not None:
-    #         overall_grades[i] = round(grade_value / 100, 3)
-
-    # plot(file_num)
-
     dataset = []
     for i, word in enumerate(filenames):
         dataset.append((readings[i], word, types[i]))
@@ -607,8 +576,11 @@ if __name__ == '__main__':
             type_4s.append(data)
 
     sorted_data = [type_0s, type_1s, type_2s, type_3s]
+    # print(sorted_data)
+
     for i, accent_data in enumerate(sorted_data):
         for j, data in enumerate(accent_data):
+            print("hi")
             save_grade_info(data)
             # print(accent_data[j][0])
         print(f"""{overall_grades},
@@ -619,31 +591,5 @@ if __name__ == '__main__':
               """)
         print(f"Finished accent type {i}.")
         clear_arrays()
-        # plot(file_num)
-
-    # # type 0
-    # overall_grades = [0.653, 1.0, 0.862, 0.72, 0.55, None, 0.862, 1.0, 1.0, 0.861, 0.55, 0.784, 0.9, 1.0, 1.0, 0.724, 0.55, 0.55]
-    # pitch_grades = [0.725, 1.0, 0.862, 0.72, 0.55, None, 0.862, 1.0, 1.0, 0.861, 0.55, 0.817, 1.0, 1.0, 1.0, 0.724, 0.55, 0.55]
-    # coefficients = [0.9, 1.0, 1.0, 1.0, 1.0, None, 1.0, 1.0, 1.0, 1.0, 1.0, 0.96, 0.9, 1.0, 1.0, 1.0, 1.0, 1.0]
-    # jump_accuracies = [1, 1, 1, 1, 0, None, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0]
-    # pattern_accuracies = [0.39, 1.0, 0.692, 0.379, 0.561, None, 0.694, 1.0, 1.0, 0.692, 0.702, 0.592, 1.0, 1.0, 1.0, 0.387, 0.69, 0.371]
-    # plot(file_num)
-    # file_num += 5
-
-    # # type 1
-    # overall_grades = [0.623, 0.802, 0.668, None, 0.598, 0.654, 0.605, 0.693, None, 0.842, 0.682]
-    # pitch_grades = [0.764, 0.802, 0.767, None, 0.696, 0.758, 0.605, 0.693, None, 0.842, 0.738]
-    # coefficients = [0.816, 1.0, 0.87, None, 0.859, 0.862, 1.0, 1.0, None, 1.0, 0.924]
-    # jump_accuracies = [None, None, None, None, None, None, None, None, None, None, None]
-    # pattern_accuracies = [0.475, 0.561, 0.483, None, 0.325, 0.462, 0.121, 0.317, None, 0.648, 0.417]
-    # plot(file_num)
-    # file_num += 5
-
-    # # type 2
-    # overall_grades = [0.735, None, 0.751, 0.55, 0.769]
-    # pitch_grades = [0.856, None, 0.751, 0.55, 0.769]
-    # coefficients = [0.859, None, 1.0, 1.0, 1.0]
-    # jump_accuracies = [1, None, 1, 0, 1]
-    # pattern_accuracies = [0.679, None, 0.446, 0.533, 0.488]
-    # plot(file_num)
-    # file_num += 5
+        plot(file_num)
+        file_num += 5
