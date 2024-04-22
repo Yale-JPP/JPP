@@ -97,8 +97,6 @@ pitch_grades = []
 jump_accuracies = []
 pattern_accuracies = []
 
-file_num = 0
-
 def preliminary_pronunciation_check(filename, expected_text):
     """Uses whisper to check to see if the base level of pronunciation is good enough to be understood by Speech-to-Text AI.
     Will go through a series of checks to see if some standard expectations are met.
@@ -435,6 +433,8 @@ def save_grade_info(data):
     pattern_accuracies.append(round(pattern_accuracy, 3))
     if jump_accuracy is not None:
         jump_accuracies.append(round(jump_accuracy, 3))
+    else:
+        jump_accuracies.append(None)
 
 def print_grade_info(data):
     word = data[0] # word in hiragana.
@@ -479,54 +479,72 @@ def plot(file_num):
     overall_grades_np = np.array(list(filter(lambda x: x is not None, overall_grades)))
     coefficients_np = np.array(list(filter(lambda x: x is not None, coefficients)))
     pitch_grades_np = np.array(list(filter(lambda x: x is not None, pitch_grades)))
-    x_axis = np.arange(len(overall_grades_np))
+    jump_accuracies_np = np.array(list(filter(lambda x: x is not None, jump_accuracies)))
+    pattern_accuracies_np = np.array(list(filter(lambda x: x is not None, pattern_accuracies)))
 
-    # scatter plots
-    # plt.scatter(x_axis, overall_grades_np, label='Overall Grades')
-    # plt.scatter(x_axis, coefficients_np, label='Coefficients')
-    # plt.scatter(x_axis, pitch_grades_np, label='Pitch Grades')
-
-    # best fit lines
-    # overall_m, overall_b = np.polyfit(x_axis, overall_grades_np, 1)
-    # overall_best_fit_y = overall_m * x_axis + overall_b
-
-    # coefficients_m, coefficients_b = np.polyfit(x_axis, coefficients_np, 1)
-    # coefficients_best_fit_y = coefficients_m * x_axis + coefficients_b
-
-    # pitch_m, pitch_b = np.polyfit(x_axis, pitch_grades_np, 1)
-    # pitch_best_fit_y = pitch_m * x_axis + pitch_b
-
-    # plt.plot(x_axis, overall_best_fit_y, color='blue')
-    # plt.plot(x_axis, coefficients_best_fit_y, color='orange')
-    # plt.plot(x_axis, pitch_best_fit_y, color='green')
-
-    plt.scatter(x_axis, overall_grades_np)
-    plt.xticks([])
-    plt.ylim(0)
-    plt.ylabel('Grades')
-    plt.title('Overall Grades')
+    plt.clf()
+    plt.hist(overall_grades_np, bins=[min(overall_grades_np), 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    plt.xlabel('Grades')
+    plt.ylabel('Frequency')
+    plt.title('Overall Grade')
     plt.savefig(f"data{str(file_num)}.png")
     file_num += 1
 
     plt.clf()
-    plt.scatter(x_axis, pitch_grades_np)
-    plt.xticks([])
-    plt.ylim(0)
-    plt.ylabel('Grades')
-    plt.title('Pitch Grades')
+    plt.hist(pitch_grades_np, bins=[min(overall_grades_np), 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    plt.xlabel('Grades')
+    plt.ylabel('Frequency')
+    plt.title('Pitch Grade')
     plt.savefig(f"data{str(file_num)}.png")
     file_num += 1
 
     plt.clf()
-    plt.scatter(x_axis, coefficients_np)
-    plt.xticks([])
-    plt.ylim(0)
-    plt.ylabel('Grades')
+    plt.hist(coefficients_np, bins=[0, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    plt.xlabel('Grades')
+    plt.ylabel('Frequency')
     plt.title('Coefficients')
     plt.savefig(f"data{str(file_num)}.png")
     file_num += 1
 
+    plt.clf()
+    plt.hist(coefficients_np, bins=[0, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    plt.xlabel('Grades')
+    plt.ylabel('Frequency')
+    plt.title('Coefficients')
+    plt.savefig(f"data{str(file_num)}.png")
+    file_num += 1
+
+    plt.clf()
+    plt.hist(jump_accuracies_np, bins=[0, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    plt.xlabel('Grades')
+    plt.ylabel('Frequency')
+    plt.title('Jump Accuracy')
+    plt.savefig(f"data{str(file_num)}.png")
+    file_num += 1
+
+    plt.clf()
+    plt.hist(pattern_accuracies_np, bins=[0, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    plt.xlabel('Grades')
+    plt.ylabel('Frequency')
+    plt.title('Pattern Accuracy')
+    plt.savefig(f"data{str(file_num)}.png")
+    file_num += 1
+
 if __name__ == '__main__':
+    file_num = 0
+
+    # a, b = split_word("せかいです")
+    # print(a, b)
+
+    # gp = GaussianParse("samples/世界.wav", "せかいです", b)
+    # syllable_clips = gp.splice_audio()
+    # gp.plot_waves()
+    # print(syllable_clips)
+    # print(len(syllable_clips))
+    # for i, syllable in enumerate(syllable_clips):
+    #     export_filename = "output/" + "sekai" + str(i) + ".wav"
+    #     sf.write(export_filename, syllable, 22050)
+
     # individual test.
     # print_grade_info(dataset[1])
 
@@ -546,21 +564,41 @@ if __name__ == '__main__':
 
     # plot(file_num)
 
-    sorted_data = [type_0s, type_1s, type_2s, type_3s]
-    for i, accent_data in enumerate(sorted_data):
-        for j, data in enumerate(accent_data):
-            save_grade_info(data)
-            # print(accent_data[j][0])
-        print(f"""{overall_grades},
-              {pitch_grades},
-              {coefficients},
-              {jump_accuracies},
-              {pattern_accuracies}
-              """)
-        print(f"Finished accent type {i}.")
-        # plot(file_num)
+    # sorted_data = [type_0s, type_1s, type_2s, type_3s]
+    # for i, accent_data in enumerate(sorted_data):
+    #     for j, data in enumerate(accent_data):
+    #         save_grade_info(data)
+    #         # print(accent_data[j][0])
+    #     print(f"""{overall_grades},
+    #           {pitch_grades},
+    #           {coefficients},
+    #           {jump_accuracies},
+    #           {pattern_accuracies}
+    #           """)
+    #     print(f"Finished accent type {i}.")
+    #     # plot(file_num)
 
+    # type 0
+    # overall_grades = [0.653, 1.0, 0.862, 0.72, 0.55, None, 0.862, 1.0, 1.0, 0.861, 0.55, 0.784, 0.9, 1.0, 1.0, 0.724, 0.55, 0.55]
+    # pitch_grades = [0.725, 1.0, 0.862, 0.72, 0.55, None, 0.862, 1.0, 1.0, 0.861, 0.55, 0.817, 1.0, 1.0, 1.0, 0.724, 0.55, 0.55]
+    # coefficients = [0.9, 1.0, 1.0, 1.0, 1.0, None, 1.0, 1.0, 1.0, 1.0, 1.0, 0.96, 0.9, 1.0, 1.0, 1.0, 1.0, 1.0]
+    # jump_accuracies = [1, 1, 1, 1, 0, None, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0]
+    # pattern_accuracies = [0.39, 1.0, 0.692, 0.379, 0.561, None, 0.694, 1.0, 1.0, 0.692, 0.702, 0.592, 1.0, 1.0, 1.0, 0.387, 0.69, 0.371]
+    # plot(file_num)
+    # file_num += 5
 
+    # overall_grades = [0.623, 0.802, None, None, 0.598, 0.654, 0.605, 0.693, None, 0.842, 0.682]
+    # pitch_grades = [0.764, 0.802, None, None, 0.696, 0.758, 0.605, 0.693, None, 0.842, 0.738]
+    # coefficients = [0.816, 1.0, None, None, 0.859, 0.862, 1.0, 1.0, None, 1.0, 0.924]
+    # jump_accuracies = [None, None, None]
+    # pattern_accuracies = [0.475, 0.561, None, None, 0.325, 0.462, 0.121, 0.317, None, 0.648, 0.417]
+    # plot(file_num)
+    # file_num += 5
 
-
-
+    # overall_grades = [0.735, None, 0.751, 0.55, 0.769]
+    # pitch_grades = [0.856, None, 0.751, 0.55, 0.769]
+    # coefficients = [0.859, None, 1.0, 1.0, 1.0]
+    # jump_accuracies = [1, None, 1, 0, 1]
+    # pattern_accuracies = [0.679, None, 0.446, 0.533, 0.488]
+    # plot(file_num)
+    # file_num += 5
