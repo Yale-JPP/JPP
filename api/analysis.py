@@ -196,7 +196,7 @@ def grade_pitch_pattern(soundfiles, accent_type, word):
             else:
                 pattern_accuracy += error_calculation(lower_bound, pitches[i])
                 high_pitch = pitches[i] # to be kinder with grading, in case they accidentally went up.
-        pattern_accuracy = pattern_accuracy / (len(pitches[2:] + 1))
+        pattern_accuracy = pattern_accuracy / (len(pitches[2:]) + 1)
 
         print(jump_accuracy, pattern_accuracy)
         grade = (jump_accuracy +  pattern_accuracy) / 2
