@@ -9,8 +9,10 @@ from settings import SELECTED_MODEL, CORRECT_LANGUAGE_WEIGHT, CORRECT_TEXT_WEIGH
 import whisper # consider local import to cut down on import time.
 import utilities
 
-from analysis import get_pitch_info, devoiced_check, get_bounds, within_bounds, error_calculation
+import matplotlib.pyplot as plt
+import numpy as np
 
+from analysis import get_pitch_info, devoiced_check, get_bounds, within_bounds, error_calculation
 
 dataset = [
     ("ごぜんです", "午前.wav", 1),
@@ -49,6 +51,53 @@ dataset = [
     ("こしょうです", "胡椒.wav", 2),
     ("じゅぎょうです", "授業.wav", 1)
 ]
+
+type_0s =  [('りょかんです', '旅館.wav', 0),
+            ('りょこうです', '旅行.wav', 0),
+            ('ねだんです', '値段.wav', 0),
+            ('しゃちょうです', '社長.wav', 0),
+            ('しあいです', '試合.wav', 0),
+            ('こしょうです', '故障.wav', 0),
+            ('よていです', '予定.wav', 0),
+            ('じしんです', '地震.wav', 0),
+            ('とかいです', '都会.wav', 0),
+            ('やきゅうです', '野球.wav', 0),
+            ('きおんです', '気温.wav', 0),
+            ('じぶんです', '自分.wav', 0),
+            ('よしゅうです', '予習.wav', 0),
+            ('しごとです', '仕事.wav', 0),
+            ('よほうです', '予報.wav', 0),
+            ('じかんです', '時間.wav', 0),
+            ('しゃしんです', '写真.wav', 0),
+            ('やさいです', '野菜.wav', 0)]
+
+type_1s = [('ごぜんです', '午前.wav', 1),
+           ('かぞくです', '家族.wav', 1),
+           (' びじゅつです', '美術.wav', 1),
+           ('きょねんです', '去年.wav', 1),
+           ('にほんです', '二本.wav', 1),
+           ('しょどうです', '書道.wav', 1),
+           ('さとうです', '佐藤.wav', 1),
+           ('きぶんです', '気分.wav', 1),
+           ('せかいです', '世界.wav', 1),
+           ('やちんです', '家賃.wav', 1),
+           ('じゅぎょうです', '授業.wav', 1)]
+
+type_2s = [('にほんです', '日本.wav', 2),
+           ('じゆうです', '自由.wav', 2),
+           ('さとうです', '砂糖.wav', 2),
+           ('しけんです', '試験.wav', 2),
+           ('こしょうです', '胡椒.wav', 2)]
+
+type_3s = [('じごくです', '地獄.wav', 3)]
+
+overall_grades = []
+coefficients = []
+pitch_grades = []
+jump_accuracies = []
+pattern_accuracies = []
+
+file_num = 0
 
 def preliminary_pronunciation_check(filename, expected_text):
     """Uses whisper to check to see if the base level of pronunciation is good enough to be understood by Speech-to-Text AI.
@@ -348,6 +397,45 @@ def grade(word, accent_type, audio_file):
 
     return data
 
+def clear_arrays():
+    overall_grades = []
+    coefficients = []
+    pitch_grades = []
+    jump_accuracies = []
+    pattern_accuracies = []
+
+def save_grade_info(data):
+    word = data[0] # word in hiragana.
+    audio_file = "samples/" + data[1] # path to sound file. assumes samples folder is populated.
+    accent_type = int(data[2])
+
+    result = grade(word, accent_type, audio_file)
+    # print(result)
+
+    if result is None:
+        coefficients.append(None)
+        pitch_grades.append(None)
+        overall_grades.append(None)
+        jump_accuracies.append(None)
+        pattern_accuracies.append(None)
+        return
+
+    coeff = result[0]
+    pitch_grade = result[1]
+    overall_grade = result[2]
+    # detected_language = result[3]
+    # detected_phrase = result[4]
+    jump_accuracy = result[5]
+    pattern_accuracy = result[6]
+    # coeff2 = result[7]
+
+    overall_grades.append(round(overall_grade / 100, 3))
+    pitch_grades.append(round(pitch_grade / 100, 3))
+    coefficients.append(round(coeff, 3))
+    pattern_accuracies.append(round(pattern_accuracy, 3))
+    if jump_accuracy is not None:
+        jump_accuracies.append(round(jump_accuracy, 3))
+
 def print_grade_info(data):
     word = data[0] # word in hiragana.
     audio_file = "samples/" + data[1] # path to sound file. assumes samples folder is populated.
@@ -387,12 +475,92 @@ Pitch grade α = {round(pitch_grade / 100, 3)}
 
     print(result_string)
 
+def plot(file_num):
+    overall_grades_np = np.array(list(filter(lambda x: x is not None, overall_grades)))
+    coefficients_np = np.array(list(filter(lambda x: x is not None, coefficients)))
+    pitch_grades_np = np.array(list(filter(lambda x: x is not None, pitch_grades)))
+    x_axis = np.arange(len(overall_grades_np))
+
+    # scatter plots
+    # plt.scatter(x_axis, overall_grades_np, label='Overall Grades')
+    # plt.scatter(x_axis, coefficients_np, label='Coefficients')
+    # plt.scatter(x_axis, pitch_grades_np, label='Pitch Grades')
+
+    # best fit lines
+    # overall_m, overall_b = np.polyfit(x_axis, overall_grades_np, 1)
+    # overall_best_fit_y = overall_m * x_axis + overall_b
+
+    # coefficients_m, coefficients_b = np.polyfit(x_axis, coefficients_np, 1)
+    # coefficients_best_fit_y = coefficients_m * x_axis + coefficients_b
+
+    # pitch_m, pitch_b = np.polyfit(x_axis, pitch_grades_np, 1)
+    # pitch_best_fit_y = pitch_m * x_axis + pitch_b
+
+    # plt.plot(x_axis, overall_best_fit_y, color='blue')
+    # plt.plot(x_axis, coefficients_best_fit_y, color='orange')
+    # plt.plot(x_axis, pitch_best_fit_y, color='green')
+
+    plt.scatter(x_axis, overall_grades_np)
+    plt.xticks([])
+    plt.ylim(0)
+    plt.ylabel('Grades')
+    plt.title('Overall Grades')
+    plt.savefig(f"data{str(file_num)}.png")
+    file_num += 1
+
+    plt.clf()
+    plt.scatter(x_axis, pitch_grades_np)
+    plt.xticks([])
+    plt.ylim(0)
+    plt.ylabel('Grades')
+    plt.title('Pitch Grades')
+    plt.savefig(f"data{str(file_num)}.png")
+    file_num += 1
+
+    plt.clf()
+    plt.scatter(x_axis, coefficients_np)
+    plt.xticks([])
+    plt.ylim(0)
+    plt.ylabel('Grades')
+    plt.title('Coefficients')
+    plt.savefig(f"data{str(file_num)}.png")
+    file_num += 1
+
 if __name__ == '__main__':
     # individual test.
     # print_grade_info(dataset[1])
 
     # full test
-    for data in dataset:
-        print_grade_info(data)
+    # for data in dataset:
+    #     print_grade_info(data)
 
-    # print(dataset[1])
+    # results from first batch
+    # overall_grades = [62.324, 65.281, 73.516, 100.0, 86.156, 80.229, 72.033, None, 55.0, None, 86.208, 100.0, 75.059, 66.763, 70.597, 100.0, None, 59.823, 86.143, 55.0, 78.391, 65.372, 90.0, 60.458, 69.287, None, 100.0, 100.0, 55.0, 84.168, 72.421, 55.0, 55.0, 76.949, 68.152]
+    # coefficients = [0.816, 0.9, 0.859, 1.0, 1.0, 1.0, 1.0, None, 1.0, None, 1.0, 1.0, 1.0, 0.87, 1.0, 1.0, None, 0.859, 1.0, 1.0, 0.96, 0.862, 0.9, 1.0, 1.0, None, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.924]
+    # pitch_grades = [0.764, 0.725, 0.856, 1.0, 0.862, 0.802, 0.72, None, 0.55, None, 0.862, 1.0, 0.751, 0.767, 0.706, 1.0, None, 0.696, 0.861, 0.55, 0.817, 0.758, 1.0, 0.605, 0.693, None, 1.0, 1.0, 0.55, 0.842, 0.724, 0.55, 0.55, 0.769, 0.738]
+    # # x_axis = range(0, 35)
+
+    # for i, grade_value in enumerate(overall_grades):
+    #     if grade_value is not None:
+    #         overall_grades[i] = round(grade_value / 100, 3)
+
+    # plot(file_num)
+
+    sorted_data = [type_0s, type_1s, type_2s, type_3s]
+    for i, accent_data in enumerate(sorted_data):
+        for j, data in enumerate(accent_data):
+            save_grade_info(data)
+            # print(accent_data[j][0])
+        print(f"""{overall_grades},
+              {pitch_grades},
+              {coefficients},
+              {jump_accuracies},
+              {pattern_accuracies}
+              """)
+        print(f"Finished accent type {i}.")
+        # plot(file_num)
+
+
+
+
+
