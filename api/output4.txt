@@ -1,0 +1,4 @@
+error with こんしゅう.wav -- incorrect syllable split
+              
+error with たいへん.wav -- incorrect syllable split
+              
