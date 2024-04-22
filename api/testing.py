@@ -33,21 +33,22 @@ filenames = [
 
 
 readings = [
-    "いちばん.wav", "こんしゅう.wav", "せんせい.wav", "はんぶん.wav", "たいへん.wav", "しゅくだい.wav", "じゅぎょう.wav", "ぶんがく.wav", "さいきん.wav", "まいにち.wav",
-    "せいかつ.wav", "しょうかい.wav", "しんせつ.wav", "やさい.wav", "せかい.wav", "しごと.wav", "せんしゅう.wav", "たんご.wav", "だいがく.wav", "せんこう.wav",
-    "すいせん.wav", "りょうり.wav", "ゆうめい.wav", "まいあさ.wav", "りゅうがく.wav", "けいけん.wav", "かんこう.wav", "えんぴつ.wav", "りょうしん.wav", "さとう.wav",
-    "ぜんぶ.wav", "きょねん.wav", "てんき.wav", "しょうらい.wav", "けいたい.wav", "しんぶん.wav", "ほんとう.wav", "まいしゅう.wav", "ばんごう.wav", "れんしゅう.wav",
-    "しあい.wav", "でんわ.wav", "ちゅうごく.wav", "さくぶん.wav", "こうえん.wav", "たいふう.wav", "しつれい.wav", "こうがく.wav", "せいじ.wav", "りょこう.wav",
-    "らいねん.wav", "きぶん.wav", "びょうき.wav", "びじゅつ.wav", "しけん.wav", "でんしゃ.wav", "よほう.wav", "べんり.wav", "しゃしん.wav", "けんか.wav",
-    "がっこう.wav", "ぼうし.wav", "こしょう.wav", "りょかん.wav", "らいげつ.wav", "きおん.wav", "びょういん.wav", "しょくぎょう.wav", "さいふ.wav", "かんこく.wav",
-    "よてい.wav", "はいゆう.wav", "しゅっしん.wav", "じごく.wav", "たてもの.wav", "きょうかい.wav", "にほん.wav", "らいしゅう.wav", "すいえい.wav",
-    "そうだん.wav", "こしょう.wav", "しつもん.wav", "おんがく.wav", "よしゅう.wav", "ねだん.wav", "けんどう.wav", "じしん.wav", "がくせい.wav",
-    "かのじょ.wav", "きょうしつ.wav", "えいが.wav", "しょうがつ.wav", "ちゅうもん.wav", "さとう.wav", "じぶん.wav", "れんらく.wav", "こうこう.wav", "にほん.wav",
-    "げんき.wav", "べんきょう.wav", "がいこく.wav", "あんぜん.wav", "ふくしゅう.wav", "さんぽ.wav", "とけい.wav", "れきし.wav", "せんたく.wav", "けんきゅう.wav",
-    "じゆう.wav", "しゅうまつ.wav", "こくばん.wav", "こんど.wav", "きょうだい.wav", "どうぶつ.wav", "たいせつ.wav", "かぞく.wav", "せいせき.wav", "すうがく.wav",
-    "じかん.wav", "ざんねん.wav", "おんせん.wav", "しゃちょう.wav", "きょうみ.wav", "とかい.wav", "ごはん.wav", "こんばん.wav", "せんげつ.wav", "ごぜん.wav",
-    "おおぜい.wav", "やちん.wav", "そうじ.wav", "ぶんか.wav", "しょどう.wav", "まいとし.wav", "かんじ.wav", "じんじゃ.wav", "えいご.wav", "やきゅう.wav"
+    "いちばんです", "こんしゅうです", "せんせいです", "はんぶんです", "たいへんです", "しゅくだいです", "じゅぎょうです", "ぶんがくです", "さいきんです", "まいにちです",
+    "せいかつです", "しょうかいです", "しんせつです", "やさいです", "せかいです", "しごとです", "せんしゅうです", "たんごです", "だいがくです", "せんこうです",
+    "すいせんです", "りょうりです", "ゆうめいです", "まいあさです", "りゅうがくです", "けいけんです", "かんこうです", "えんぴつです", "りょうしんです", "さとうです",
+    "ぜんぶです", "きょねんです", "てんきです", "しょうらいです", "けいたいです", "しんぶんです", "ほんとうです", "まいしゅうです", "ばんごうです", "れんしゅうです",
+    "しあいです", "でんわです", "ちゅうごくです", "さくぶんです", "こうえんです", "たいふうです", "しつれいです", "こうがくです", "せいじです", "りょこうです",
+    "らいねんです", "きぶんです", "びょうきです", "びじゅつです", "しけんです", "でんしゃです", "よほうです", "べんりです", "しゃしんです", "けんかです",
+    "がっこうです", "ぼうしです", "こしょうです", "りょかんです", "らいげつです", "きおんです", "びょういんです", "しょくぎょうです", "さいふです", "かんこくです",
+    "よていです", "はいゆうです", "しゅっしんです", "じごくです", "たてものです", "きょうかいです", "にほんです", "らいしゅうです", "すいえいです",
+    "そうだんです", "こしょうです", "しつもんです", "おんがくです", "よしゅうです", "ねだんです", "けんどうです", "じしんです", "がくせいです",
+    "かのじょです", "きょうしつです", "えいがです", "しょうがつです", "ちゅうもんです", "さとうです", "じぶんです", "れんらくです", "こうこうです", "にほんです",
+    "げんきです", "べんきょうです", "がいこくです", "あんぜんです", "ふくしゅうです", "さんぽです", "とけいです", "れきしです", "せんたくです", "けんきゅうです",
+    "じゆうです", "しゅうまつです", "こくばんです", "こんどです", "きょうだいです", "どうぶつです", "たいせつです", "かぞくです", "せいせきです", "すうがくです",
+    "じかんです", "ざんねんです", "おんせんです", "しゃちょうです", "きょうみです", "とかいです", "ごはんです", "こんばんです", "せんげつです", "ごぜんです",
+    "おおぜいです", "やちんです", "そうじです", "ぶんかです", "しょどうです", "まいとしです", "かんじです", "じんじゃです", "えいごです", "やきゅうです"
 ]
+
 
 
 types = [
@@ -385,18 +386,22 @@ def grade(word, accent_type, audio_file):
     sf_array = []
     word_array, mora_length = split_word(word)
 
-    gp = GaussianParse(audio_file, word, mora_length)
-    syllable_clips = gp.splice_audio()
+    try:
+        gp = GaussianParse(audio_file, word, mora_length)
+        syllable_clips = gp.splice_audio()
+    except IndexError:
+        print(f"""error with {word} -- index error""")
+        return
 
     if len(syllable_clips) == mora_length:
         for i, syllable in enumerate(syllable_clips):
-            export_filename = "output/" + word[i] + ".wav"
+            export_filename = "output/" + word_array[i] + ".wav"
+            print(export_filename)
             sf.write(export_filename, syllable, 22050)
             # sf_array.append(syllable)
             sf_array.append(export_filename)
     else:
-        print(f"""error with {word} -- incorrect syllable split
-              """)
+        print(f"""error with {word} -- incorrect syllable split""")
         return
 
     result = calculate_grade(audio_file, sf_array, word, word_array, accent_type)
@@ -576,7 +581,8 @@ if __name__ == '__main__':
             type_4s.append(data)
 
     sorted_data = [type_0s, type_1s, type_2s, type_3s]
-    # print(sorted_data)
+    for accent_type in sorted_data:
+        print(sorted_data)
 
     for i, accent_data in enumerate(sorted_data):
         for j, data in enumerate(accent_data):
