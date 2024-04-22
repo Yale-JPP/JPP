@@ -516,96 +516,135 @@ def plot(file_num):
     jump_accuracies_np = np.array(list(filter(lambda x: x is not None, jump_accuracies)))
     pattern_accuracies_np = np.array(list(filter(lambda x: x is not None, pattern_accuracies)))
 
+    print(file_num)
+
     plt.clf()
-    plt.hist(overall_grades_np, bins=[0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    values, bins, bars = plt.hist(overall_grades_np, bins=[0, 0.2, 0.4, 0.6, 0.8, 1])
     plt.xlabel('Grades')
     plt.ylabel('Frequency')
     plt.title('Overall Grade')
+    plt.bar_label(bars, fontsize=10, color='navy')
     plt.savefig(f"data{str(file_num)}.png")
     file_num += 1
 
+    if len(overall_grades_np) != 0: print(min(overall_grades_np), max(overall_grades_np))
+
     plt.clf()
-    plt.hist(pitch_grades_np, bins=[0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    values, bins, bars = plt.hist(pitch_grades_np, bins=[0, 0.2, 0.4, 0.6, 0.8, 1])
     plt.xlabel('Grades')
     plt.ylabel('Frequency')
     plt.title('Pitch Grade')
+    plt.bar_label(bars, fontsize=10, color='navy')
     plt.savefig(f"data{str(file_num)}.png")
     file_num += 1
+    if len(pitch_grades_np) != 0: print(min(pitch_grades_np), max(pitch_grades_np))
 
     plt.clf()
-    plt.hist(coefficients_np, bins=[0, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    values, bins, bars = plt.hist(coefficients_np, bins=[0, 0.2, 0.4, 0.6, 0.8, 1])
     plt.xlabel('Grades')
     plt.ylabel('Frequency')
     plt.title('Coefficients')
+    plt.bar_label(bars, fontsize=10, color='navy')
     plt.savefig(f"data{str(file_num)}.png")
     file_num += 1
+    if len(coefficients_np) != 0: print(min(coefficients_np), max(coefficients_np))
 
     plt.clf()
-    plt.hist(coefficients_np, bins=[0.8, 0.9, 1])
-    plt.xlabel('Grades')
-    plt.ylabel('Frequency')
-    plt.title('Coefficients')
-    plt.savefig(f"data{str(file_num)}.png")
-    file_num += 1
-
-    plt.clf()
-    plt.hist(jump_accuracies_np, bins=[-.5,.5,1.5], ec="k")
+    values, bins, bars = plt.hist(jump_accuracies_np, bins=[-.5,.5,1.5], ec="k")
     plt.xticks((0,1))
     plt.xlabel('Grades')
     plt.ylabel('Frequency')
     plt.title('Jump Accuracy')
+    plt.bar_label(bars, fontsize=10, color='navy')
     plt.savefig(f"data{str(file_num)}.png")
     file_num += 1
+    if len(jump_accuracies_np) != 0: print(min(jump_accuracies_np), max(jump_accuracies_np))
 
     plt.clf()
-    plt.hist(pattern_accuracies_np, bins=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    values, bins, bars = plt.hist(pattern_accuracies_np, bins=[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
     plt.xlabel('Grades')
     plt.ylabel('Frequency')
     plt.title('Pattern Accuracy')
+    plt.bar_label(bars, fontsize=10, color='navy')
     plt.savefig(f"data{str(file_num)}.png")
     file_num += 1
+    if len(pattern_accuracies_np) != 0: print(min(pattern_accuracies_np), max(pattern_accuracies_np))
 
 if __name__ == '__main__':
+#     dataset = []
+#     for i, word in enumerate(filenames):
+#         dataset.append((readings[i], word, types[i]))
+
+#     dataset = sorted(dataset, key=lambda data: data[2])
+
+#     for data in dataset:
+#         if data[2] == 0:
+#             type_0s.append(data)
+#         elif data[2] == 1:
+#             type_1s.append(data)
+#         elif data[2] == 2:
+#             type_2s.append(data)
+#         elif data[2] == 3:
+#             type_3s.append(data)
+#         elif data[2] == 4:
+#             type_4s.append(data)
+
+#     type_0s = []
+#     type_1s = []
+#     type_2s = []
+#     type_3s = []
+
+#     sorted_data = [type_0s, type_1s, type_2s, type_3s, type_4s]
+#     for accent_type in sorted_data:
+#         print(accent_type)
+
+#     for i, accent_data in enumerate(sorted_data):
+#         for j, data in enumerate(accent_data):
+#             save_grade_info(data)
+#             # print(accent_data[j][0])
+#         print(f"""{overall_grades},
+# {pitch_grades},
+# {coefficients},
+# {jump_accuracies},
+# {pattern_accuracies}
+#               """)
+#         print(f"Finished accent type {i}.")
+#         clear_arrays()
     file_num = 0
 
-    dataset = []
-    for i, word in enumerate(filenames):
-        dataset.append((readings[i], word, types[i]))
+    # type 0
+    overall_grades = [0.847, 0.775, None, None, None, 0.723, 0.633, 1.0, None, 0.716, None, 0.598, None, 0.952, None, 0.843, 0.623, None, None, None, 0.847, 0.902, 0.63, 0.676, 0.775, 0.679, None, 0.111, None, None, 1.0, 0.953, None, 0.931, 1.0, 0.93, 0.638, None, None, None, 0.776, 0.708, 0.897, None, 0.904, 0.931, 0.57, None, 0.723, None, None, 0.896, None, 0.9, 0.931, 1.0, None, None, None, 0.679, 0.872, None, 0.716, 0.629, None, 0.266, 0.886, 0.775, 0.931, None, None, 0.605, None, None, None, None, 0.799, None, 0.862, 0.575, 0.86, 1.0, None, None, None, None, 0.931]
+    pitch_grades = [0.847, 0.775, None, None, None, 0.723, 0.633, 1.0, None, 0.775, None, 0.623, None, 0.952, None, 0.843, 0.623, None, None, None, 0.847, 0.902, 0.63, 0.676, 0.775, 0.679, None, 0.617, None, None, 1.0, 0.953, None, 0.931, 1.0, 0.93, 0.86, None, None, None, 0.863, 0.708, 0.897, None, 0.904, 0.931, 0.634, None, 0.723, None, None, 0.896, None, 1.0, 0.931, 1.0, None, None, None, 0.679, 0.908, None, 0.775, 0.629, None, 0.775, 1.0, 0.93, 0.931, None, None, 0.908, None, None, None, None, 0.948, None, 0.862, 0.775, 0.86, 1.0, None, None, None, None, 0.931]
+    coefficients = [1.0, 1.0, None, None, None, 1.0, 1.0, 1.0, None, 0.924, None, 0.96, None, 1.0, None, 1.0, 1.0, None, None, None, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, None, 0.18, None, None, 1.0, 1.0, None, 1.0, 1.0, 1.0, 0.742, None, None, None, 0.9, 1.0, 1.0, None, 1.0, 1.0, 0.9, None, 1.0, None, None, 1.0, None, 0.9, 1.0, 1.0, None, None, None, 1.0, 0.96, None, 0.924, 1.0, None, 0.343, 0.886, 0.833, 1.0, None, None, 0.666, None, None, None, None, 0.843, None, 1.0, 0.742, 1.0, 1.0, None, None, None, None, 1.0]
+    jump_accuracies = [1, 0, None, None, None, 0, 0, 1, None, 0, None, 0, None, 1, None, 0.516, 0, None, None, None, 1, 1, 0, 0, 0, 0, None, 0, None, None, 1, 1, None, 1, 1, 1, 1, None, None, None, 1, 0, 1, None, 1, 1, 0, None, 0, None, None, 1, None, 1, 1, 1, None, None, None, 0, 1, None, 0, 0, None, 0, 1, 1, 1, None, None, 1, None, None, None, None, 1, None, 1, 0, 1, 1, None, None, None, None, 1]
+    pattern_accuracies = [0.32, 1.0, None, None, None, 0.77, 0.371, 1.0, None, 1.0, None, 0.323, None, 0.785, None, 0.787, 0.324, None, None, None, 0.318, 0.563, 0.355, 0.561, 1.0, 0.576, None, 0.298, None, None, 1.0, 0.793, None, 0.692, 1.0, 0.69, 0.379, None, None, None, 0.39, 0.702, 0.54, None, 0.573, 0.694, 0.371, None, 0.77, None, None, 0.538, None, 1.0, 0.692, 1.0, None, None, None, 0.574, 0.592, None, 1.0, 0.351, None, 1.0, 1.0, 0.691, 0.693, None, None, 0.593, None, None, None, None, 0.77, None, 0.387, 1.0, 0.379, 1.0, None, None, None, None, 0.692]
 
-    dataset = sorted(dataset, key=lambda data: data[2])
+    plot(file_num)
+    file_num += 5
 
-    for data in dataset:
-        if data[2] == 0:
-            type_0s.append(data)
-        elif data[2] == 1:
-            type_1s.append(data)
-        elif data[2] == 2:
-            type_2s.append(data)
-        elif data[2] == 3:
-            type_3s.append(data)
-        elif data[2] == 4:
-            type_4s.append(data)
+    # type 1
+    overall_grades = [0.682, None, 0.687, None, None, 0.656, 0.673, 0.638, 0.605, 0.726, None, 0.727, 0.75, 0.693, 0.668, 0.796, None, 0.748, 0.699, 0.736, 0.598, 0.725, None, 0.673, 0.802, 0.791, 0.816, 0.753, 0.77, 0.623, 0.842, 0.692, 0.654, 0.641]
+    pitch_grades = [0.738, None, 0.687, None, None, 0.781, 0.673, 0.751, 0.605, 0.726, None, 0.727, 0.75, 0.693, 0.767, 0.796, None, 0.748, 0.699, 0.736, 0.696, 0.725, None, 0.673, 0.802, 0.791, 0.883, 0.753, 0.77, 0.764, 0.842, 0.692, 0.758, 0.719]
+    coefficients = [0.924, None, 1.0, None, None, 0.84, 1.0, 0.85, 1.0, 1.0, None, 1.0, 1.0, 1.0, 0.87, 1.0, None, 1.0, 1.0, 1.0, 0.859, 1.0, None, 1.0, 1.0, 1.0, 0.924, 1.0, 1.0, 0.816, 1.0, 1.0, 0.862, 0.892]
+    jump_accuracies = [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+    pattern_accuracies = [0.417, None, 0.304, None, None, 0.513, 0.273, 0.447, 0.121, 0.391, None, 0.393, 0.443, 0.317, 0.483, 0.546, None, 0.44, 0.33, 0.413, 0.325, 0.389, None, 0.274, 0.561, 0.535, 0.739, 0.45, 0.489, 0.475, 0.648, 0.316, 0.462, 0.376]
 
-    type_0s = []
-    type_1s = []
-    type_2s = []
-    type_3s = []
+    plot(file_num)
+    file_num += 5
 
-    sorted_data = [type_0s, type_1s, type_2s, type_3s, type_4s]
-    for accent_type in sorted_data:
-        print(accent_type)
+    # type 2
+    overall_grades = [None, None, 0.67, None, None, 0.797, 0.885, 0.875, None]
+    pitch_grades = [None, None, 0.67, None, None, 0.928, 0.885, 0.875, None]
+    coefficients = [None, None, 1.0, None, None, 0.859, 1.0, 1.0, None]
+    jump_accuracies = [None, None, 0, None, None, 1, 1, 1, None]
+    pattern_accuracies = [None, None, 0.533, None, None, 0.679, 0.488, 0.446, None]
 
-    for i, accent_data in enumerate(sorted_data):
-        for j, data in enumerate(accent_data):
-            save_grade_info(data)
-            # print(accent_data[j][0])
-        print(f"""{overall_grades},
-{pitch_grades},
-{coefficients},
-{jump_accuracies},
-{pattern_accuracies}
-              """)
-        print(f"Finished accent type {i}.")
-        clear_arrays()
-        # plot(file_num)
-        # file_num += 5
+    plot(file_num)
+    file_num += 5
+
+    # type 3
+    overall_grades = [0.606, 0.852, 0.833, 0.605, 0.89, 0.874, 0.612]
+    pitch_grades = [0.606, 0.852, 0.833, 0.648, 0.89, 0.874, 0.612]
+    coefficients = [1.0, 1.0, 1.0, 0.933, 1.0, 1.0, 1.0]
+    jump_accuracies = [0, 1, 1, 0, 1, 1, 0]
+    pattern_accuracies = [0.248, 0.341, 0.258, 0.436, 0.51, 0.44, 0.276]
