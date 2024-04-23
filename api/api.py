@@ -37,11 +37,11 @@ def parse_syllables():
     wav_path = "audio.wav"
     # data, samplerate = sf.read(io.BytesIO(audio))
 
-    gp = GaussianParse(wav_path, "しごとです", 5)
-    syllable_clips = gp.splice_audio()
-    # gp.plot_waves()
+    gp = GaussianParse(wav_path, "せんせいです", 6)
+    syllable_clips = gp.parse_clips()
+    gp.plot_waves()
     for i, syllable in enumerate(syllable_clips):
-        export_filename = "output/" + "仕事" + str(i) + ".wav"
+        export_filename = "output/" + "先生" + str(i) + ".wav"
         sf.write(export_filename, syllable, 22050)
 
     return jsonify("it works"), 200

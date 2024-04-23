@@ -386,7 +386,7 @@ def grade(word, accent_type, audio_file):
 
     try:
         gp = GaussianParse(audio_file, word, mora_length)
-        syllable_clips = gp.splice_audio()
+        syllable_clips = gp.parse_clips()
     except IndexError:
         print(f"""error with {word} -- index error""")
         return
