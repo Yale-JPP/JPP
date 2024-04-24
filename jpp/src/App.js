@@ -16,35 +16,38 @@ import Verbs from './pages/Verbs/Verbs';
 import Names from './pages/Names';
 import GenericPitchTips from './pages/GenericPitchTips';
 // import { Nouns, OneTwoNoun, TwoOneNoun, TwoTwoNoun, ChineseOriginated, Gairaigo } from './pages/Nouns/';
+import Navbar from './components/Navbar'
+import { Box } from '@mui/material';
 
 function App() {
 
   return (
-
+    
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage/>}/>
+      <Box>
+        <Navbar/>
+        <Routes>
+          <Route path="/" element={<HomePage/>}/>
 
-        <Route path="/nouns" element={<Nouns/>}/>
-        <Route path="/1+2_noun" element={<OneTwoNoun/>}/>
-        <Route path="/2+1_noun" element={<TwoOneNoun/>}/>
-        <Route path="/2+2_noun" element={<TwoTwoNoun/>}/>
-        <Route path="/chinese_originated" element={<ChineseOriginated/>}/>
-        <Route path="/compound" element={<Compound/>}/>
-        <Route path="/gairaigo" element={<Gairaigo/>}/>
+          <Route path="/nouns" element={<Nouns/>}/>
+          <Route path="/1+2_noun" element={<OneTwoNoun/>}/>
+          <Route path="/2+1_noun" element={<TwoOneNoun/>}/>
+          <Route path="/2+2_noun" element={<TwoTwoNoun/>}/>
+          <Route path="/chinese_originated" element={<ChineseOriginated/>}/>
+          <Route path="/compound" element={<Compound/>}/>
+          <Route path="/gairaigo" element={<Gairaigo/>}/>
 
-        <Route path="/verbs" element={<Verbs/>}/>
-        <Route path="/dictionary" element={<Dictionary/>}/>
-        <Route path="/masu_form" element={<Masu/>}/>
-        <Route path="/negative_dict" element={<NegativeDict/>}/>
-        <Route path="/te_ta" element={<TeTaForm/>}/>
+          <Route path="/verbs" element={<Verbs/>}/>
+          <Route path="/dictionary" element={<Dictionary/>}/>
+          <Route path="/masu_form" element={<Masu/>}/>
+          <Route path="/negative_dict" element={<NegativeDict/>}/>
+          <Route path="/te_ta" element={<TeTaForm/>}/>
 
-        <Route path="/names" element={<Names/>}/>
+          <Route path="/names" element={<Names/>}/>
 
-        <Route path="/generic_pitch_tips" element={<GenericPitchTips/>}/>
-
-
-      </Routes>
+          <Route path="/generic_pitch_tips" element={<GenericPitchTips/>}/>
+        </Routes>
+      </Box>
     </BrowserRouter>
 
   )
