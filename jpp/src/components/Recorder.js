@@ -1,16 +1,24 @@
-import { Button } from '@mui/material';
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Box, Button, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import axios from 'axios';
 
 // Used https://developer.mozilla.org/en-US/docs/Web/API/MediaStream_Recording_API/Using_the_MediaStream_Recording_API
 // Assisted by previous code from Murtaza
 
 function Recorder() {
+  const [word, setWord] = useState('');
+  const [accentType, setAccentType] = useState(0);
+  const [reader, setReader] = useState(null);
+  const [grade, setGrade] = useState(null);
+
   const mimeType = "audio/webm";
   const [stream, setStream] = useState();
   const mediaRecorder = useRef();
   const [permission, setPermission] = useState(false);
   const [chunks, setChunks] = useState([]);
-  // const [audio, setAudio] = useState("");
+  const [recording, setRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     getUserPermission();
@@ -19,33 +27,37 @@ function Recorder() {
   const getUserPermission = async () => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       console.log("getUserMedia supported.");
-      navigator.mediaDevices
-        .getUserMedia(
-          // constraints - only audio needed for this app
-          {
-            audio: true,
-          },
-        )
-
-        // Success callback
-        .then((stream) => {
-          setStream(stream)
-          setPermission(true)
-          console.log(stream)
-        })
-
-        // Error callback
-        .catch((err) => {
-          console.error(`The following getUserMedia error occurred: ${err}`);
-        });
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        setStream(stream);
+        setPermission(true);
+        console.log(stream);
+      } catch (err) {
+        console.error(`The following getUserMedia error occurred: ${err}`);
+        setError('Error getting user permission: ' + err.message);
+      }
     } else {
       console.log("getUserMedia not supported on your browser!");
+      setError("getUserMedia not supported on your browser!");
     }
-  }
+  };
+
+  const handleRecord = () => {
+    if (!permission) {
+      getUserPermission();
+    }
+
+    if (!recording) {
+      setRecording(true);
+      startRecording();
+    } else {
+      setRecording(false);
+      stopRecording();
+    }
+  };
 
   const startRecording = () => {
     const media = new MediaRecorder(stream, { mimeType: mimeType });
-
     mediaRecorder.current = media;
 
     mediaRecorder.current.start();
@@ -58,9 +70,8 @@ function Recorder() {
       localChunks.push(e.data);
     };
 
-    setChunks(localChunks)
-
-  }
+    setChunks(localChunks);
+  };
 
   const stopRecording = () => {
     mediaRecorder.current.stop();
@@ -69,44 +80,62 @@ function Recorder() {
 
     mediaRecorder.current.onstop = (e) => {
       const audioBlob = new Blob(chunks, { type: mimeType });
+      setAudioBlob(audioBlob);
 
       const reader = new FileReader();
-
-      reader.addEventListener("loadend", async () => {
-        // reader.result contains the contents of blob as a typed array
-        console.log(reader.result);
-        const response = await fetch('/parse-syllables', {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            "audio": reader.result
-          })
-        });
-        const result = await response.json();
-        console.log(result);
-      });
       reader.readAsDataURL(audioBlob);
+      setReader(reader);
+
     };
+  };
 
-  }
-
-  const recordClick = async () => {
-    if (!permission) {
-      getUserPermission();
-    }
-    else {
-      startRecording();
+  const handleGrade = async () => {
+    if (!reader) {
+      setError('Please record audio before grading.');
+      return;
     }
 
-  }
+    if (!word) {
+      setError('Please enter the word before grading.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('word', word);
+    formData.append('accent_type', accentType);
+    formData.append('sf', reader.result);
+
+    try {
+      const response = await axios.post('/grade', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      const { grade } = response.data;
+      setGrade(grade);
+    } catch (error) {
+      console.error('Error grading:', error);
+    }
+  };
 
   return (
-    <div>
-      <Button variant="contained" onClick={recordClick}>Record</Button>
-      <Button variant="contained" onClick={stopRecording}>Stop</Button>
-    </div>
+    <Box>
+      <InputLabel htmlFor="word">Word:</InputLabel>
+      <TextField id="word" label="Enter a word" variant="outlined" value={word} onChange={(e) => setWord(e.target.value)}/>
+      <InputLabel htmlFor="accentType">Accent Type:</InputLabel>
+      <Select id="accentType" value={accentType} onChange={(e) => setAccentType(e.target.value)}>
+        <MenuItem value="0">0</MenuItem>
+        <MenuItem value="1">1</MenuItem>
+        <MenuItem value="2">2</MenuItem>
+        <MenuItem value="3">3</MenuItem>
+        <MenuItem value="4">4</MenuItem>
+      </Select>
+      <Button onClick={handleRecord} variant="contained">
+        {recording ? 'Stop Recording' : 'Start Recording'}
+      </Button>
+      <Button onClick={handleGrade} variant="contained">Grade</Button>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {audioBlob && <audio src={URL.createObjectURL(audioBlob)} controls />}
+      {grade !== null && <p>Grade: {grade}</p>}
+    </Box>
   );
 }
 
