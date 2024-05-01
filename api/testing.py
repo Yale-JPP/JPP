@@ -1,4 +1,4 @@
-from gaussian_parse import GaussianParse
+from peak_parse import PeakParse
 from utilities import split_word
 import soundfile as sf
 
@@ -385,7 +385,7 @@ def grade(word, accent_type, audio_file):
     word_array, mora_length = split_word(word)
 
     try:
-        gp = GaussianParse(audio_file, word, mora_length)
+        gp = PeakParse(audio_file, word, mora_length)
         syllable_clips = gp.parse_clips()
     except IndexError:
         print(f"""error with {word} -- index error""")

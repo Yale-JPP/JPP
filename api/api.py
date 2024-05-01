@@ -4,7 +4,7 @@ import io
 import wave
 from base64 import b64decode
 from flask import Flask, request, jsonify
-from gaussian_parse import GaussianParse
+from peak_parse import PeakParse
 from grading import calculate_grade
 from utilities import split_word
 import soundfile as sf
@@ -37,9 +37,9 @@ def parse_syllables():
     wav_path = "audio.wav"
     # data, samplerate = sf.read(io.BytesIO(audio))
 
-    gp = GaussianParse(wav_path, "せんせいです", 6)
+    gp = PeakParse(wav_path, "せんせいです", 6)
     syllable_clips = gp.parse_clips()
-    gp.plot_waves()
+    # gp.plot_waves()
     for i, syllable in enumerate(syllable_clips):
         export_filename = "output/" + "先生" + str(i) + ".wav"
         sf.write(export_filename, syllable, 22050)
@@ -81,8 +81,8 @@ def grade():
 
     print("finished converting to wav")
 
-    gp = GaussianParse(wav_path, word, mora_length)
-    syllable_clips = gp.splice_audio()
+    gp = PeakParse(wav_path, word, mora_length)
+    syllable_clips = gp.parse_clips()
 
     if len(syllable_clips) == mora_length:
         for i, syllable in enumerate(syllable_clips):

@@ -13,7 +13,7 @@ vowels = ['あ', 'い', 'う', 'え', 'お', 'ん']
 skip = ['ゃ', 'ゅ', 'ょ']
 
 
-class GaussianParse():
+class PeakParse():
     """
     Takes the file of an audio file and makes a waveform.
     Guassian filters the curve to find the peaks and dips of that curve.
