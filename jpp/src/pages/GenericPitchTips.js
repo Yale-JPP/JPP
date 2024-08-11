@@ -1,6 +1,6 @@
 function GenericPitchTips () {
   return (
-    <div>
+    <div id="mw">
       Generic Pitch Tips.
     </div>
   );

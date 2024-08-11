@@ -1,6 +1,6 @@
 function Gairaigo () {
   return (
-    <div>
+    <div id="mw">
       This is Garaigo.
     </div>
   );

@@ -1,6 +1,6 @@
 function Compound () {
   return (
-    <div>
+    <div id="mw">
       This is Compound.
     </div>
   );

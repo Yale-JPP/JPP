@@ -1,6 +1,6 @@
 function NegativeDict () {
   return (
-    <div>
+    <div id="mw">
       This is negative dictionary conjugations. 
     </div>
   );

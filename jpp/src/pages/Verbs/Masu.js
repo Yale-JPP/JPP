@@ -1,6 +1,6 @@
 function Masu () {
   return (
-    <div>
+    <div id="mw">
       This is Masu verbs.
     </div>
   );

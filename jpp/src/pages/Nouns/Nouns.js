@@ -1,6 +1,6 @@
 function Nouns () {
   return (
-    <div>
+    <div id="mw">
       This is nouns.
     </div>
   );

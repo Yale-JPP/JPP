@@ -5,7 +5,7 @@ import WordBank from "../../components/Wordbank";
 
 function OneTwoNoun () {
   return (
-    <Box>
+    <Box id="mw">
       <Recorder></Recorder>
       <WordBank></WordBank>
     </Box>

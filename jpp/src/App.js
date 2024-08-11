@@ -28,24 +28,24 @@ function App() {
         <Navbar/>
         <Routes>
           <Route path="/" element={<HomePage/>}/>
-
+          {/* Nouns */}
           <Route path="/nouns" element={<Nouns/>}/>
-          <Route path="/1+2_noun" element={<OneTwoNoun/>}/>
-          <Route path="/2+1_noun" element={<TwoOneNoun/>}/>
-          <Route path="/2+2_noun" element={<TwoTwoNoun/>}/>
-          <Route path="/chinese_originated" element={<ChineseOriginated/>}/>
-          <Route path="/compound" element={<Compound/>}/>
+          <Route path="/1+2-Nouns" element={<OneTwoNoun/>}/>
+          <Route path="/2+1-Nouns" element={<TwoOneNoun/>}/>
+          <Route path="/2+2-Nouns" element={<TwoTwoNoun/>}/>
+          <Route path="/chinese-originated" element={<ChineseOriginated/>}/>
+          <Route path="/compounds" element={<Compound/>}/>
           <Route path="/gairaigo" element={<Gairaigo/>}/>
-
+          {/* Verbs */}
           <Route path="/verbs" element={<Verbs/>}/>
           <Route path="/dictionary" element={<Dictionary/>}/>
-          <Route path="/masu_form" element={<Masu/>}/>
-          <Route path="/negative_dict" element={<NegativeDict/>}/>
-          <Route path="/te_ta" element={<TeTaForm/>}/>
-
+          <Route path="/masu-form" element={<Masu/>}/>
+          <Route path="/negatives" element={<NegativeDict/>}/>
+          <Route path="/te-ta" element={<TeTaForm/>}/>
+          {/* Names */}
           <Route path="/names" element={<Names/>}/>
-
-          <Route path="/generic_pitch_tips" element={<GenericPitchTips/>}/>
+          {/* Generic */}
+          <Route path="/generic-pitch-tips" element={<GenericPitchTips/>}/>
         </Routes>
       </Box>
     </BrowserRouter>

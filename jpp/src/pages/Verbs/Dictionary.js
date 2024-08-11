@@ -1,6 +1,6 @@
 function Dictionary () {
   return (
-    <div>
+    <div id="mw">
       This is Dictionary form. 
     </div>
   );

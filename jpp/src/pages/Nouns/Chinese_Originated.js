@@ -1,6 +1,6 @@
 function ChineseOriginated () {
   return (
-    <div>
+    <div id="mw">
       This is Chinese Originated nouns.
     </div>
   );

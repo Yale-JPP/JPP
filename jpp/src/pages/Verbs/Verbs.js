@@ -1,6 +1,6 @@
 function Verbs () {
   return (
-    <div>
+    <div id="mw">
       Verbs explanation. 
     </div>
   );
