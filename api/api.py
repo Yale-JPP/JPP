@@ -8,8 +8,10 @@ from peak_parse import PeakParse
 from grading import calculate_grade
 from utilities import split_word
 import soundfile as sf
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/time')
 def get_current_time():

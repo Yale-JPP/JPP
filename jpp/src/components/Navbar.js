@@ -7,27 +7,27 @@ import { AppBar, List, ListItem, Toolbar, useScrollTrigger } from '@mui/material
 const Nouns = [
   {
     title: '1+2 Nouns',
-    path: '/1+2_noun',
+    path: '/1+2-Nouns',
     cName: 'dropdown-link'
   },
   {
     title: '2+1 Nouns',
-    path: '/2+1_noun',
+    path: '/2+1-Nouns',
     cName: 'dropdown-link'
   },
   {
     title: '2+2 Nouns',
-    path: '/2+2_noun',
+    path: '/2+2-Nouns',
     cName: 'dropdown-link'
   },
   {
     title: 'Chinese-originated',
-    path: '/chinese_originated',
+    path: '/chinese-originated',
     cName: 'dropdown-link'
   },
   {
     title: 'Compound Nouns',
-    path: '/compound',
+    path: '/compounds',
     cName: 'dropdown-link'
   },
   {
@@ -45,17 +45,17 @@ const Verbs = [
   },
   {
     title: 'ます form',
-    path: '/masu_form',
+    path: '/masu-form',
     cName: 'dropdown-link'
   },
   {
     title: 'Dictionary Negative Conjugations',
-    path: '/negative_dict',
+    path: '/negatives',
     cName: 'dropdown-link'
   },
   {
     title: 'て・た Form',
-    path: '/te_ta',
+    path: '/te-ta',
     cName: 'dropdown-link'
   }
 ];

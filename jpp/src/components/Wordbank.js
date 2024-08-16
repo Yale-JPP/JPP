@@ -17,7 +17,7 @@ function WordBank() {
     fetchData()
   }, []);
 
-  console.log(words)
+  // console.log(words)
 
   return (
     <Box>

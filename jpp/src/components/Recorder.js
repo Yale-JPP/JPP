@@ -105,6 +105,8 @@ function Recorder() {
     formData.append('accent_type', accentType);
     formData.append('sf', reader.result);
 
+    axios.defaults.withCredentials = true;
+
     try {
       const response = await axios.post('/grade', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
